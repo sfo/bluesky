@@ -49,6 +49,7 @@ class SafetyAMAN(core.Entity):
         # updated when aircraft are created or deleted in the simulation.
         logger.info("Hello, Bluesky!")
         self._enabled = False
+        self._ticks = 0
 
     def create(self, n=1):
         ''' This function gets called automatically when new aircraft are created. '''
@@ -64,6 +65,9 @@ class SafetyAMAN(core.Entity):
     @core.timed_function(name='control', dt=5)
     def update(self):
         ''' Periodic update function for our example entity. '''
+        self._ticks += 1
+        if self._ticks % 100 == 0:
+            logger.info("Tick count: %d", self._ticks)
 
         if traf.ntraf < 1 or not self._enabled:
             return
