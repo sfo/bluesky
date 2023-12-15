@@ -1,10 +1,11 @@
 # Automatically generated directories and files
-/output
-/plugins
-/cache
-/scenario/ic.scn
-/bluesky/resources/grib
-/bluesky/resources/netcdf
+output
+plugins/*
+!plugins/safety_aman
+cache
+scenario/ic.scn
+bluesky/resources/grib
+bluesky/resources/netcdf
 
 # Potentially locally-copied BADA installation
 /bluesky/resources/performance/BADA/*
