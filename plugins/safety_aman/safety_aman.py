@@ -92,7 +92,7 @@ class SafetyAMAN(core.Entity):
     #       This converts callsign to the corresponding index in the traffic arrays.
     # - The count argument is a regular int.
     @stack.command
-    def saman(self, enable: bool | None = None):
+    def saman(self, enable=None):
         if enable is None:
             return True, f'S-AMAN supported air traffic control is {"enabled" if self._enabled else "disabled"}.'
         self._enabled = enable
