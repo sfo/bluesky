@@ -1,6 +1,7 @@
 # Automatically generated directories and files
 output
-plugins
+plugins/*
+!plugins/safety_aman
 cache
 scenario/ic.scn
 bluesky/resources/grib
