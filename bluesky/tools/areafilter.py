@@ -65,32 +65,32 @@ def getArea(areaname):
     return basic_shapes.get(areaname, None)
 
 
-def defineArea(name, shape, coordinates, top=1e9, bottom=-1e9):
+def defineArea(arename, areatype, coordinates, top=1e9, bottom=-1e9):
     """Define a new area"""
-    if name == 'LIST':
+    if arename == 'LIST':
         if not basic_shapes:
             return True, 'No shapes are currently defined.'
         else:
             return True, 'Currently defined shapes:\n' + \
                 ', '.join(basic_shapes)
-    if not coordinates:
-        if name in basic_shapes:
-            return True, str(basic_shapes[name])
+    if coordinates is None:
+        if arename in basic_shapes:
+            return True, str(basic_shapes[arename])
         else:
-            return False, f'Unknown shape: {name}'
-    if shape == 'BOX':
-        basic_shapes[name] = Box(name, coordinates, top, bottom)
-    elif shape == 'CIRCLE':
-        basic_shapes[name] = Circle(name, coordinates, top, bottom)
-    elif shape[:4] == 'POLY':
-        basic_shapes[name] = Poly(name, coordinates, top, bottom)
-    elif shape == 'LINE':
-        basic_shapes[name] = Line(name, coordinates)
+            return False, f'Unknown shape: {arename}'
+    if areatype == 'BOX':
+        basic_shapes[arename] = Box(arename, coordinates, top, bottom)
+    elif areatype == 'CIRCLE':
+        basic_shapes[arename] = Circle(arename, coordinates, top, bottom)
+    elif areatype[:4] == 'POLY':
+        basic_shapes[arename] = Poly(arename, coordinates, top, bottom)
+    elif areatype == 'LINE':
+        basic_shapes[arename] = Line(arename, coordinates)
 
     # Pass the shape on to the connected clients
-    polypub.send_update(polys={name:dict(shape=shape, coordinates=coordinates)})
+    polypub.send_update(polys={arename:dict(shape=areatype, coordinates=coordinates)})
 
-    return True  #, f'Created {shape} {name}'
+    return True  #, f'Created {areatype} {arename}'
 
 
 def checkInside(areaname, lat, lon, alt):
