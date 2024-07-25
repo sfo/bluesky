@@ -6,7 +6,7 @@ import bluesky as bs
 from bluesky.tools import geo
 from bluesky import settings
 from bluesky.ui import palette
-from bluesky.tools.aero import ft, nm, kts
+from bluesky.tools.aero import ft, nm, kts, fpm
 
 # Register settings defaults
 settings.set_variable_defaults(
@@ -308,7 +308,8 @@ class Traffic(glh.RenderObject, layer=100):
                         else:
                             rawlabel += 'FL%03d' % int(alt / ft / 100. + 0.5)
                         vsarrow = 30 if vs > 0.25 else 31 if vs < -0.25 else 32
-                        rawlabel += '%1s  %-8d' % (chr(vsarrow),
+                        rawlabel += '%1s%2d%-8d' % (chr(vsarrow),
+                                                   int(abs(vs / fpm) / 100),
                                                    int(cas / kts + 0.5))
                     else:
                         rawlabel += 16 * ' '
