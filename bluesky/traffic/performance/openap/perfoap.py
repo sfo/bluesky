@@ -174,6 +174,13 @@ class OpenAP(PerfBase):
         mask[-n:] = True
         self.vmin[-n:], self.vmax[-n:] = self._construct_v_limits(mask)
 
+    def available_actypes(self) -> set[str]:
+        return (
+            set(self.coeff.dragpolar_fixwing) |
+            set(self.coeff.actypes_rotor) |
+            set(self.coeff.synodict.keys())
+        )
+
     def update(self, dt):
         """Periodic update function for performance calculations."""
         # update phase, infer from spd, roc, alt
