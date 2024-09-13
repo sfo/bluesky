@@ -50,7 +50,7 @@ class PerfBase(Entity, replaceable=True):
         self.vsmin[-n:] = -1e6
         self.vsmax[-n:] = 1e6
 
-    def available_actypes(self) -> set[str]:
+    def available_actypes(self, fixwing_only: bool = True) -> set[str]:
         return set()
 
     @timed_function(name="performance", dt=settings.performance_dt, manual=True)
