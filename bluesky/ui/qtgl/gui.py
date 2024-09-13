@@ -4,7 +4,7 @@ try:
         QtMsgType, QT_VERSION, QT_VERSION_STR
     from PyQt5.QtWidgets import QApplication, QErrorMessage
     from PyQt5.QtGui import QFont
-    
+
 except ImportError:
     from PyQt6.QtCore import Qt, QEvent, qInstallMessageHandler, \
         QT_VERSION, QT_VERSION_STR
@@ -22,19 +22,20 @@ from bluesky.ui.qtgl.mainwindow import MainWindow, Splash, DiscoveryDialog
 from bluesky.ui.qtgl.customevents import NUMCUSTOMEVENTS
 
 
-print(('Using Qt ' + QT_VERSION_STR + ' for windows and widgets'))
+bs.logger.info(f'Using Qt {QT_VERSION_STR} for windows and widgets')
+
 
 def gui_msg_handler(msgtype, context, msg):
     if msgtype == QtMsgType.QtWarningMsg:
-        print('Qt gui warning:', msg)
+        bs.logger.warning(f'Qt gui warning: {msg}')
     elif msgtype == QtMsgType.QtCriticalMsg:
-        print('Qt gui critical error:', msg)
+        bs.logger.critical(f'Qt gui critical error: {msg}')
     elif msgtype == QtMsgType.QtFatalMsg:
-        print('Qt gui fatal error:', msg)
+        bs.logger.fatal(f'Qt gui fatal error: {msg}')
     elif msgtype == QtMsgType.QtInfoMsg:
-        print('Qt information message:', msg)
+        bs.logger.info(f'Qt information message: {msg}')
     elif msgtype == QtMsgType.QtDebugMsg:
-        print('Qt debug message:', msg)
+        bs.logger.debug(f'Qt debug message: {msg}')
 
 
 def start(hostname=None):
@@ -67,7 +68,7 @@ def start(hostname=None):
     for etype in range(1000, 1000 + NUMCUSTOMEVENTS):
         reg_etype = QEvent.registerEventType(etype)
         if reg_etype != etype:
-            print(('Warning: Registered event type differs from requested type id (%d != %d)' % (reg_etype, etype)))
+            bs.logger.warning(('Registered event type differs from requested type id (%d != %d)' % (reg_etype, etype)))
 
     splash.show()
 

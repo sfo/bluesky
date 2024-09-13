@@ -38,11 +38,11 @@ class Map(glh.RenderObject, layer=-100):
 
         # Load and bind world texture
         max_texture_size = glh.gl.glGetIntegerv(glh.gl.GL_MAX_TEXTURE_SIZE)
-        print('Maximum supported texture size: %d' % max_texture_size)
+        bs.logger.info('Maximum supported texture size: %d' % max_texture_size)
         for i in [16384, 8192, 4096]:
             fname = bs.resource(bs.settings.gfx_path) / f'world.{i}x{i//2}.dds'
             if max_texture_size >= i and fname.exists():
-                print(f'Loading texture {fname}')
+                bs.logger.info(f'Loading texture {fname}')
                 self.map.create(vertex=mapvertices,
                                 texcoords=texcoords, texture=fname)
                 break
@@ -59,7 +59,7 @@ class Map(glh.RenderObject, layer=-100):
 
         if actdata.show_map and not skipmap:
             self.map.draw()
-        
+
         # Skip coastlines if set to disabled
         if not actdata.show_coast:
             return

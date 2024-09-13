@@ -22,7 +22,7 @@ except ImportError:
                          QOpenGLVertexArrayObject, QOpenGLBuffer,
                          QOpenGLVersionProfile, QOpenGLTexture, QOpenGLVersionFunctionsFactory)
     from PyQt6.QtGui import QSurfaceFormat, QOpenGLContext, QImage
-    
+
     opengl_versions = ((4, 1), (2, 1), (2, 0))
 
 
@@ -59,8 +59,8 @@ def get_profile_settings():
                     importlib.import_module(f'PyQt5._QOpenGLFunctions_{version[0]}_{version[1]}_{profile}')
                 elif QT_VERSION_STR[0] == '6':
                     importlib.import_module(f'PyQt6.QtOpenGL', package=f'QOpenGLFunctions_{version[0]}_{version[1]}_{profile}')
-                
-                print(f'Found Qt-provided OpenGL functions for OpenGL {version} {profile}')
+
+                bs.logger.info(f'Found Qt-provided OpenGL functions for OpenGL {version} {profile}')
                 return version, QSurfaceFormat.OpenGLContextProfile.CoreProfile if profile == 'Core' else QSurfaceFormat.OpenGLContextProfile.CompatibilityProfile
             except:
                 continue
@@ -94,7 +94,7 @@ def init():
                     'No OpenGL version >= 3.3 support detected for this system!')
         else:
             # If profile was none, PyQt6 is not shipped with any OpenGL function modules. Use PyOpenGL instead
-            print("Couldn't find OpenGL functions in Qt. Falling back to PyOpenGL")
+            bs.logger.warning("Couldn't find OpenGL functions in Qt. Falling back to PyOpenGL")
             globals()['gl'] = importlib.import_module('OpenGL.GL')
 
         globals()['_glvar_sizes'] = {
@@ -216,7 +216,7 @@ def init_glcontext(ctx):
                                ctypes.c_uint32, ctypes.c_uint32, ctypes.c_void_p)
     funcptr = ctx.getProcAddress(b'glTexSubImage2D')
     gl.glTexSubImage2D_alt = funtype(funcptr.__int__())
-    
+
     if getattr(gl, '__name__', '') == 'OpenGL.GL':
         # In case we are using PyOpenGL, get some of the functions to behave in the
         # same way as their counterparts in Qt
@@ -253,7 +253,7 @@ def init_glcontext(ctx):
                                 height, depth, sourceFormat, sourceType, ctypes.c_void_p(int(data)))
         gl.glTexSubImage3D = glTexSubImage3D
 
-    
+
         # The extended initialisation of the remaining GL functions in this function
         # is only required for Qt-provided GL functions
         return
@@ -279,7 +279,7 @@ def init_glcontext(ctx):
     #                             const void * pointer)
 
 
-    funtype = ctypes.CFUNCTYPE(None, ctypes.c_uint32, ctypes.c_int32, ctypes.c_uint32, 
+    funtype = ctypes.CFUNCTYPE(None, ctypes.c_uint32, ctypes.c_int32, ctypes.c_uint32,
                                ctypes.c_uint32, ctypes.c_void_p)
     funcptr = ctx.getProcAddress(b'glVertexAttribIPointer')
     # c_getvapointer = funtype(funcptr.__int__())
@@ -436,8 +436,8 @@ class ShaderProgram(QOpenGLShaderProgram):
             success = success and self.link()
 
         if not success:
-            print('Shader program creation unsuccessful:')
-            print(self.log())
+            bs.logger.error('Shader program creation unsuccessful:')
+            bs.logger.error(self.log())
             return False
 
         # Obtain list of attributes with location and size info
@@ -732,15 +732,15 @@ class RenderWidget(QOpenGLWidget, RenderTarget):
         # First check for supported GL version
         gl_version = float(gl.glGetString(gl.GL_VERSION)[:3])
         if gl_version < 3.3:
-            print(('OpenGL context created with GL version %.1f' % gl_version))
-            qCritical("""Your system reports that it supports OpenGL up to version %.1f. The minimum requirement for BlueSky is OpenGL 3.3.
+            bs.logger.info(f'OpenGL context created with GL version {gl_version:.1f}')
+            bs.logger.critical(f"""Your system reports that it supports OpenGL up to version {gl_version:.1f}. The minimum requirement for BlueSky is OpenGL 3.3.
                 Generally, AMD/ATI/nVidia cards from 2008 and newer support OpenGL 3.3, and Intel integrated graphics from the Haswell
                 generation and newer. If you think your graphics system should be able to support GL>=3.3 please open an issue report
-                on the BlueSky Github page (https://github.com/TUDelft-CNS-ATM/bluesky/issues)""" % gl_version)
+                on the BlueSky Github page (https://github.com/TUDelft-CNS-ATM/bluesky/issues)""")
             return
 
         if self._shaderset is None and self._renderobjs:
-            qCritical("Cannot create render objects without an initialised shader set!")
+            bs.logger.critical("Cannot create render objects without an initialised shader set!")
             return
 
         # Initialise our shaderset if this hasn't been done yet
@@ -804,15 +804,15 @@ class RenderObject(Entity, skipbase=True):
 
 @command(aliases=('ADDVIS',))
 def addvisual(objname: "txt" = "", target: "txt" = "RADARWIDGET"):
-    ''' Add a render object to a render target. 
-    
+    ''' Add a render object to a render target.
+
         Argements:
-        - obj: The renderobject to add. 
+        - obj: The renderobject to add.
         - target: A render target such as the RadarWidget (the default) and the ND.
     '''
     if not target:
         return True, f'Available render targets: {", ".join(RenderTarget.__rendertargets__)}'
-    
+
     targetobj = RenderTarget.__rendertargets__.get(target)
     if not targetobj:
         return False, f'Render target {target} not found!\n' + \
@@ -922,7 +922,7 @@ class GLBuffer(QOpenGLBuffer):
             self.allocate(size)
         # Test if allocated size is as requested
         if self.size() != size:
-            print(f'GLBuffer: Warning: could not allocate buffer of size {size}. Actual size is {self.size()}')
+            bs.logger.warning(f'GLBuffer could not allocate buffer of size {size}. Actual size is {self.size()}')
 
     def update(self, data, offset=0, size=None):
         ''' Send new data to this GL buffer. '''
@@ -930,10 +930,10 @@ class GLBuffer(QOpenGLBuffer):
         size = size or dsize
         self.bind()
         if size > self.size() - offset:
-            print(f'GLBuffer: Warning, trying to send more data ({size} bytes)'
+            bs.logger.warning(f'GLBuffer: trying to send more data ({size} bytes)'
                   f'to buffer than allocated size ({self.size()} bytes).')
             size = self.size() - offset
-        
+
         self.write(offset, dbuf, size)
         # TODO: master branch has try/except for buffer writes after closing context
 

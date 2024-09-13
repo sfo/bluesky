@@ -163,7 +163,6 @@ class Coefficient:
                 pass
             else:
                 warn = f"Warning: Some performance parameters for {mdl} are not found, default values used."
-                print(warn)
                 bs.scr.echo(warn)
 
         return limits_rotor

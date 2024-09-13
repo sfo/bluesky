@@ -115,17 +115,17 @@ class Route(Replaceable):
             appi += 1
             name_ = name_[:-len_]+fmt_.format(appi)
         return name_
-    
+
     @stack.command(name = 'ADDWPTMODE', annotations = 'acid, [wpt,alt]')
     @staticmethod
     def addwptMode(acidx, mode = None, value = None):
         '''Changes the mode of the ADDWPT command to add waypoints of type 'mode'.
-        Available modes: FLYBY, FLYOVER, FLYTURN. Also used to specify 
+        Available modes: FLYBY, FLYOVER, FLYTURN. Also used to specify
         TURNSPEED or TURNRADIUS.'''
         # Get aircraft route
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
-        # First, we want to check what 'mode' is, and then call addwptStack 
+        # First, we want to check what 'mode' is, and then call addwptStack
         # accordingly.
         if mode in ['FLYBY', 'FLYOVER', 'FLYTURN']:
             # We're just changing addwpt mode, call the appropriate function.
@@ -137,7 +137,7 @@ class Route(Replaceable):
             # We're changing the turn properties.
             Route.addwptStack(acidx, mode, value)
             return True
-            
+
         elif mode == None:
             # Just echo the current wptmode
             if acrte.swflyby == True and acrte.swflyturn == False:
@@ -151,7 +151,7 @@ class Route(Replaceable):
             else:
                 bs.scr.echo('Current ADDWPT mode is FLYTURN.')
                 return True
-            
+
     @stack.command(name='ADDWPT', annotations='acid,wpt,[alt,spd,wpinroute,wpinroute]', aliases=("WPTYPE",))
     @staticmethod
     def addwptStack(acidx, *args):  # args: all arguments of addwpt
@@ -159,7 +159,7 @@ class Route(Replaceable):
         # First get the appropriate ac route
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
-        
+
         #debug print ("addwptStack:",args)
         #print("active = ",self.wpname[self.iactwp])
         #print(argsnwp
@@ -495,7 +495,7 @@ class Route(Replaceable):
             bs.traf.swlnav[acidx] = True
 
         if afterwp and acrte.wpname.count(afterwp) == 0:
-            print(afterwp, acrte.wpname)
+            bs.logger.info(f"{afterwp} {acrte.wpname}")
             return True, "Waypoint " + afterwp + " not found\n" + \
                 "waypoint added at end of route"
         else:
@@ -1009,7 +1009,7 @@ class Route(Replaceable):
     @staticmethod
     def direct(acidx: 'acid', wpname: 'wpinroute'):
         """DIRECT acid wpname
-        
+
             Go direct to specified waypoint in route (FMS)"""
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
@@ -1108,7 +1108,7 @@ class Route(Replaceable):
     @staticmethod
     def SetRTA(acidx: 'acid', wpname: 'wpinroute', time: 'time'):  # all arguments of setRTA
         """ RTA acid, wpname, time
-        
+
             Add RTA to waypoint record"""
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
@@ -1333,7 +1333,7 @@ class Route(Replaceable):
     @staticmethod
     def delwpt(acidx: 'acid', wpname: 'wpinroute'):
         """DELWPT acid,wpname
-        
+
            Delete a waypoint from a route (FMS). """
         # Delete complete route?
         if wpname == "*":

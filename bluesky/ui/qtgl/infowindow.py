@@ -14,10 +14,10 @@ try:
     from PyQt5.QtCore import Qt
     from PyQt5.QtWidgets import QTabWidget, QVBoxLayout, QScrollArea, QWidget
     matplotlib.use('Qt5Agg')
-    
+
     from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, \
         NavigationToolbar2QT as NavigationToolbar
-        
+
 except ImportError:
     from PyQt6.QtCore import Qt
     from PyQt6.QtWidgets import QTabWidget, QVBoxLayout, QScrollArea, QWidget
@@ -72,7 +72,7 @@ class InfoWindow(Entity):
 
         # A reset flag is sent upon sim reset to indicate removal of sim plots
         if data.pop('reset', False):
-            print('plotter gui reset')
+            bs.logger.info('plotter gui reset')
             self.plottab.remove_plots(sender_id)
 
         self.plottab.update_plots(data, sender_id)

@@ -1,6 +1,7 @@
 """ BlueSky ADS-B datafeed plugin. Reads the feed from a Mode-S Beast server,
     and visualizes traffic in BlueSky."""
 import time
+import bluesky as bs
 from bluesky import stack, settings, traf
 from bluesky.tools.network import TcpSocket
 from bluesky.tools import aero
@@ -251,9 +252,9 @@ class Modesbeast(TcpSocket):
 
     def debug(self):
         addlist = str.join(', ', self.acpool.keys())
-        print(addlist)
-        print("")
-        print("total count: %d" % len(self.acpool.keys()))
+        bs.logger.debug(addlist)
+        bs.logger.debug("")
+        bs.logger.debug("total count: %d" % len(self.acpool.keys()))
         return
 
     def update(self):

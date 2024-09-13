@@ -7,7 +7,7 @@ Make sure scenario can be saved
 
 """
 
-
+import bluesky as bs
 from bluesky import stack,traf,sim,tools,navdb  #, settings, navdb, traf, sim, scr, tools
 from bluesky.plugins.trafgenclasses import Source, Drain, setcircle
 from bluesky.tools.position import txt2pos
@@ -28,7 +28,7 @@ globalgain = 1.0
 
 
 def init_plugin():
-    print("Initialising contest scenario generator")
+    bs.logger.info("Initialising contest scenario generator")
 
     # Create an empty geovector list
     reset()
@@ -356,6 +356,6 @@ def drawdeprwy(apt,rwy,rwylat,rwylon,rwyhdg):
     R = str(rightlat)+","+str(rightlon)
 
     stack.stack("POLYLINE " + apt + rwy + "-D," + ",".join([R,D,L,D,T]))
-   
+
 
     return apt + rwy + "-D"

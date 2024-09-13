@@ -2,6 +2,7 @@
 from bluesky import settings
 from bluesky.core import Signal
 from bluesky.pathfinder import resource
+import logging
 
 
 # Constants
@@ -25,6 +26,10 @@ sim = None
 scr = None
 server = None
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 def init(mode='sim', configfile=None, scenfile=None, discoverable=False,
          gui=None, detached=False, workdir=None, **kwargs):
@@ -34,7 +39,7 @@ def init(mode='sim', configfile=None, scenfile=None, discoverable=False,
         - mode: Running mode of this bluesky process [sim/client/server]
         - configfile: Load a different configuration file [filename]
         - scenfile: Start with a running scenario [filename]
-        - discoverable: Make server discoverable through UDP (only relevant 
+        - discoverable: Make server discoverable through UDP (only relevant
           when this process is running a server) [True/False]
         - gui: Gui type (only when mode is client or server) [qtgl/pygame/console]
         - detached: Run with or without networking (only when mode is sim) [True/False]
