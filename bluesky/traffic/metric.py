@@ -441,8 +441,8 @@ class metric_CoCa():
                 self.cocametric[name][l][4] = self.precocametric[name][l][4] / self.precocametric[name][l][0]
                 self.cocametric[name][l][0] = self.cocametric[name][l][1] * (self.cocametric[name][l][2] + self.cocametric[name][l][3] + self.cocametric[name][l][4])
 
-        print("Iteration number: "+str(self.iteration+1))
-        print("Reset time = "+str(self.resettime))
+        bs.logger.info(f"Iteration number: {self.iteration+1}")
+        bs.logger.info(f"Reset time = {self.resettime}")
         return
 
 
@@ -618,7 +618,7 @@ class metric_HB():
         # Vectors CPA_dist and CPA_time
         self.apply_twoCircleMethod()
         time2 = time()
-        print("Time to Complete Calculation: " + str(time2-time1))
+        bs.logger.info(f"Time to Complete Calculation: {time2-time1}")
 
         bs.sim.op()
         return
@@ -808,7 +808,7 @@ class metric_HB():
         self.complexity[self.step][0] = ac_totalscore #/ self.ntraf
         self.complexity[self.step][1] = ac_totalscore / max(1,self.ntraf)
 
-        print("Complexity per Aircraft: " + str(self.complexity[self.step][1]))
+        bs.logger.info(f"Complexity per Aircraft: {self.complexity[self.step][1]}")
         return
 
 
@@ -1399,7 +1399,7 @@ class Metric():
         if self.metricstime == 0:
             self.tbegin = bs.sim.simt
             self.metricstime = 1
-            print("METRICS STARTED")
+            bs.logger.info("METRICS STARTED")
             # FIR_circle(bs.navdb,self.fir_number)
             # cmd.stack("AREA "+str(self.cellarea[2][0])+","+str(self.cellarea[2][1])+ \
             #   ","+str(self.cellarea[0][0])+","+str(self.cellarea[0][1]))
@@ -1411,7 +1411,7 @@ class Metric():
             elif self.metric_number == 1:
                 self.metric[self.metric_number].applymetric()
 
-        print("Number of Aircraft in Research Area (FIR):" + str(self.metric[self.metric_number].ntraf))
+        bs.logger.info(f"Number of Aircraft in Research Area (FIR): {self.metric[self.metric_number].ntraf}")
 
         deleteAC = []
         for i in range(0,bs.traf.ntraf):

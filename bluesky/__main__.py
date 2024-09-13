@@ -41,8 +41,8 @@ def main():
         else:
             # Only print start message in the non-sim cases to avoid printing
             # this for every started node
-            print("   *****   BlueSky Open ATM simulator *****")
-            print("Distributed under GNU General Public License v3")
+            bs.logger.info("   *****   BlueSky Open ATM simulator *****")
+            bs.logger.info("Distributed under GNU General Public License v3")
 
         # Start server if server/gui or server-headless is started here
         if bs.mode == 'server':
@@ -65,11 +65,12 @@ def main():
         modulename = missingmodules.get(error.name) or error.name
         if modulename is None or 'bluesky' in modulename:
             raise error
-        print("Bluesky needs", modulename)
-        print("Run setup-python.bat (Windows) or check requirements.txt (other systems)")
-        print("Install using e.g. pip install", modulename)
+        bs.logger.error(f"Bluesky needs {modulename}")
+        bs.logger.error("Run setup-python.bat (Windows) or check requirements.txt (other systems)")
+        bs.logger.error(f"Install using e.g. pip install {modulename}")
 
-    print('BlueSky normal end.')
+    bs.logger.info('BlueSky normal end.')
+
 
 if __name__ == '__main__':
     sys.exit(main())

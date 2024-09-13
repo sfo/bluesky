@@ -1,4 +1,5 @@
 ''' Stack Command implementation. '''
+import bluesky as bs
 import inspect
 
 from bluesky.core.funcobject import FuncObject
@@ -46,7 +47,7 @@ class Command:
         else:
             # for subclasses reimplementing stack functions we keep only one
             # Command object
-            print(f'Attempt to reimplement {name} from {cmdobj.callback} to {func}')
+            bs.logger.info(f'Attempt to reimplement {name} from {cmdobj.callback} to {func}')
             if not isinstance(cmdobj, cls):
                 raise TypeError(f'Error reimplementing {name}: '
                                 f'A {type(cmdobj).__name__} cannot be '

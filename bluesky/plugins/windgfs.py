@@ -63,12 +63,12 @@ class WindGFS(WindSim):
 
         if not fpath.is_file():
             stack.echo("Downloading file, please wait...")
-            print("Downloading %s" % remote_url)
+            bs.logger.info(f"Downloading {remote_url}")
 
             response = requests.get(remote_url, stream=True)
 
             if response.status_code != 200:
-                print("Error. remote data not found")
+                bs.logger.error("Remote data not found!")
                 return None
 
             with open(fpath, "wb") as f:
@@ -161,12 +161,12 @@ class WindGFS(WindSim):
             pred = 3
         elif self.hour == 24:
             ymd0 = "%04d%02d%02d" % (self.year, self.month, self.day)
-            print(ymd0)
-            ymd1 = (datetime.datetime.strptime(ymd0, '%Y%m%d') + 
+            bs.logger.info(ymd0)
+            ymd1 = (datetime.datetime.strptime(ymd0, '%Y%m%d') +
                     datetime.timedelta(days=1))
             self.year  = ymd1.year
             self.month = ymd1.month
-            self.day   = ymd1.day    
+            self.day   = ymd1.day
             self.hour  = 0
             pred = 0
         else:
@@ -199,7 +199,7 @@ class WindGFS(WindSim):
         vnorth  = np.reshape(data[:,4], (reshapefactor, -1)).T
         windalt = np.reshape(data[:,2], (reshapefactor, -1)).T[:,0]
 
-        self.addpointvne(lat, lon, vnorth, veast, windalt)        
+        self.addpointvne(lat, lon, vnorth, veast, windalt)
 
         return True, "Wind field updated in area [%d, %d], [%d, %d]. " \
             % (self.lat0, self.lat1, self.lon0, self.lon1) \

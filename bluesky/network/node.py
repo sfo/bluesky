@@ -92,7 +92,7 @@ class Node(Entity):
                 if event != zmq.POLLIN:
                     # The event does not refer to incoming data: skip for now
                     continue
-            
+
                 # Receive the message
                 ctx.msg = sock.recv_multipart()
                 if not ctx.msg:
@@ -106,7 +106,7 @@ class Node(Entity):
                     pydata = msgpack.unpackb(ctx.msg[1], object_hook=decode_ndarray, raw=False)
                     sub = Subscription.subscriptions.get(ctx.topic, None) #or Subscription(ctx.topic, directedonly=True)
                     if sub is None:
-                        print('No subscription known for', ctx.topic, 'on', self.node_id)
+                        bs.logger.warning(f'No subscription known for {ctx.topic} on {self.node_id}')
                         continue
 
                     # Unpack dict or list, skip empty string
@@ -181,7 +181,7 @@ class Node(Entity):
 
         self._subscribe(topic, from_group, to_group, actonly)
 
-        # Messages coming in that match this subscription will be emitted using a 
+        # Messages coming in that match this subscription will be emitted using a
         # subscription signal
         return sub
 
@@ -214,8 +214,8 @@ class Node(Entity):
         self.sock_recv.setsockopt(zmq.UNSUBSCRIBE, bto_group.ljust(IDLEN, b'*') + btopic + bfrom_group)
 
     def addnodes(self, count=1, *node_ids):
-        ''' Tell the server to add 'count' nodes. 
-        
+        ''' Tell the server to add 'count' nodes.
+
             If provided, create these nodes with the specified node ids.
         '''
         self.send('ADDNODES', dict(count=count, node_ids=node_ids), self.server_id)

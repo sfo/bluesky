@@ -119,25 +119,25 @@ def init(bada_path=''):
 
                 if 'Unknown' not in (release_date, bada_version):
                     break
-        print('Found BADA version %s (release date %s)' % (bada_version, release_date))
+        bs.logger.info(f'Found BADA version {bada_version} (release date {release_date})')
     else:
-        print('No BADA release summary found: can not determine version.')
+        bs.logger.error('No BADA release summary found: can not determine version.')
 
     synonymfile = bada_path / 'SYNONYM.NEW'
     if not synonymfile.is_file():
-        print('SYNONYM.NEW not found in BADA path, could not load BADA.')
+        bs.logger.error('SYNONYM.NEW not found in BADA path, could not load BADA.')
         return False
 
     try:
         data = syn_parser.parse(synonymfile)
     except ParseError as e:
-        print(f'Error reading synonym file {e.fname} on line {e.lineno}')
+        bs.logger.error(f'Error reading synonym file {e.fname} on line {e.lineno}')
         return False
 
     for line in data:
         syn = Synonym(line)
         synonyms[syn.accode] = syn
-    print('%d aircraft entries loaded' % len(synonyms))
+    bs.logger.info(f'{len(synonyms)} aircraft entries loaded')
 
     # Load aircraft coefficient data
     for fname in bada_path.glob('*.OPF'):
@@ -149,12 +149,12 @@ def init(bada_path=''):
                 ac.setAPFData(apf_parser.parse(apf))
 
         except ParseError as e:
-            print(f'Error reading {e.fname} on line {e.lineno}')
+            bs.logger.error(f'Error reading {e.fname} on line {e.lineno}')
             ac = None
 
         if ac:
             accoeffs[ac.actype] = ac
-    print('%d unique aircraft coefficient sets loaded' % len(accoeffs))
+    bs.logger.info(f'{len(accoeffs)} unique aircraft coefficient sets loaded')
     return (len(synonyms) > 0 and len(accoeffs) > 0)
 
 

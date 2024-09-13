@@ -114,10 +114,10 @@ class Legacy(PerfBase):
                 coeffidx.append(0)
                 if not settings.verbose:
                     if not self.warned:
-                        print("Aircraft is using default B747-400 performance.")
+                        bs.logger.warning("Aircraft is using default B747-400 performance.")
                         self.warned = True
                 else:
-                    print("Flight " + bs.traf.id[-1] + " has an unknown aircraft type, " + actype + ", BlueSky then uses default B747-400 performance.")
+                    bs.logger.info(f"Flight {bs.traf.id[-1]} has an unknown aircraft type, {actype}, BlueSky then uses default B747-400 performance.")
         coeffidx = np.array(coeffidx)
 
         # note: coefficients are initialized in SI units

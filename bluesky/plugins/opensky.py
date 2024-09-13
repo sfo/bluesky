@@ -17,6 +17,7 @@ import pickle
 import requests
 import numpy as np
 
+import bluesky as bs
 from bluesky import stack, settings, traf
 from bluesky.core import Entity, timed_function
 from bluesky.tools import cachefile
@@ -49,7 +50,7 @@ def get_actypedb():
         try:
             actypes = cache.load()
         except (pickle.PickleError, cachefile.CacheError) as e:
-            print(e.args[0])
+            bs.logger.error(e.args[0])
             import io, zipfile
             f = requests.get('https://junzisun.com/adb/download')
             with zipfile.ZipFile(io.BytesIO(f.content)) as zfile:

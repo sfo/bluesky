@@ -64,11 +64,11 @@ class Plugin:
                 stackfuns = result[1]
                 # Add the plugin's stack functions to the stack
                 bs.stack.append_commands(stackfuns)
-            
 
-            return True, 'Successfully loaded plugin %s' % self.plugin_name
+
+            return True, f'Successfully loaded plugin {self.plugin_name}'
         except ImportError as e:
-            print('BlueSky plugin system failed to load', self.plugin_name, ':', e)
+            bs.logger.error(f'BlueSky plugin system failed to load {self.plugin_name}: {e}')
             return False, f'Failed to load {self.plugin_name}'
 
     @classmethod
@@ -113,6 +113,7 @@ class Plugin:
                                     else:
                                         ret_dicts = [iitem.value]
                                     if len(ret_dicts) not in (1, 2):
+                                        bs.logger.error(f"{fname} looks like a plugin, but init_plugin() doesn't return one or two dicts")
                                         continue
                                     ret_names = [el.id if isinstance(el, ast.Name) else '' for el in ret_dicts]
 
@@ -124,13 +125,13 @@ class Plugin:
 
                             # Parse the config dict
                             if len(ret_dicts) not in (1, 2):
-                                print(f"{fname} looks like a plugin, but init_plugin() doesn't return one or two dicts")
+                                bs.logger.warning(f"{fname} looks like a plugin, but init_plugin() doesn't return one or two dicts")
                                 continue
 
                             cfgdict = {k.s:v for k,v in zip(ret_dicts[0].keys, ret_dicts[0].values)}
                             plugintype = cfgdict.get('plugin_type')
                             if plugintype is None:
-                                print(f'{fname} looks like a plugin, but no plugin type (sim/gui) is specified. ' 
+                                bs.logger.error(f'{fname} looks like a plugin, but no plugin type (sim/gui) is specified. '
                                         'To fix this, add the element plugin_type to the configuration dictionary that is returned from init_plugin()')
                                 continue
                             if plugintype.s == reqtype:
@@ -163,7 +164,7 @@ def init(mode):
     for pname in settings.enabled_plugins:
         if pname.upper() not in Plugin.plugins_ext:
             success = Plugin.load(pname.upper())
-            print(success[1])
+            bs.logger.info(success[1])
 
     # Create the plugin management stack command
     @stack.command(name='PLUGINS', aliases=('PLUGIN', 'PLUG-IN', 'PLUG-INS', f'{req_type.upper()}PLUGIN'))
