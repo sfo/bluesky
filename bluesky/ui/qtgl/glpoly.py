@@ -1,4 +1,5 @@
 ''' BlueSky OpenGL line and polygon (areafilter) drawing. '''
+import bluesky as bs
 import numpy as np
 from bluesky.core import Signal
 from bluesky.network import context as ctx
@@ -15,7 +16,7 @@ from bluesky.network.common import ActionType
 palette.set_default_colours(
     polys=(0, 0, 255),
     previewpoly=(0, 204, 255)
-) 
+)
 
 # Static defines
 POLYPREV_SIZE = 500 # Max number of vertices in preview off new edited polygon
@@ -80,7 +81,7 @@ class Poly(glh.RenderObject, layer=-20):
             self.allpolys.draw()
             if self.show_poly > 1:
                 self.allpfill.draw()
-        
+
     def cmdline_stacked(self, cmd, args):
         if cmd in ['AREA', 'BOX', 'POLY', 'POLYGON', 'CIRCLE', 'LINE', 'POLYLINE']:
             self.polyprev.set_vertex_count(0)
@@ -136,7 +137,7 @@ class Poly(glh.RenderObject, layer=-20):
             self.allpolys.set_vertex_count(0)
             self.allpfill.set_vertex_count(0)
             names = data.polys.keys()
-        
+
         # The data argument passed to this subscriber contains all poly
         # data. We only need the current updates, which are in ctx.action_content
         elif ctx.action == ActionType.Delete:
@@ -160,8 +161,8 @@ class Poly(glh.RenderObject, layer=-20):
                     color = polydata.get('color', palette.polys)
                     self.bufdata[name] = self.genbuffers(shape, coordinates, color)
                 except:
-                    print("Could not process incoming poly data")
-                
+                    bs.logger.error("Could not process incoming poly data")
+
         if self.bufdata:
             self.glsurface.makeCurrent()
             contours, fills, colors = zip(*self.bufdata.values())

@@ -2,6 +2,7 @@
 from threading import Thread
 import zmq
 import msgpack
+import bluesky as bs
 from bluesky import stack
 from bluesky.core.walltime import Timer
 from bluesky.network.npcodec import encode_ndarray, decode_ndarray
@@ -55,7 +56,7 @@ class Node:
 
     def event(self, eventname, eventdata, sender_id):
         ''' Event data handler. Reimplemented in Simulation. '''
-        print(f'Received {eventname} data from {sender_id}')
+        bs.logger.info(f'Received {eventname} data from {sender_id}')
 
     def step(self):
         ''' Perform one iteration step. Reimplemented in Simulation. '''
@@ -74,7 +75,7 @@ class Node:
         self.send_event(b'REGISTER')
         self.node_id = self.event_io.recv_multipart()[-1]
         self.server_id = self.node_id[:5]
-        print(f'Node started, id={self.node_id}')
+        bs.logger.info(f'Node started, id={self.node_id}')
 
         # run() implements the main loop
         self.run()

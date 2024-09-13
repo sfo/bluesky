@@ -34,7 +34,7 @@ class CacheFile():
             self.file.close()
             self.file = None
             raise CacheError('Cache file out of date: ' + str(self.fname))
-        print('Reading cache:', self.fname)
+        bs.logger.info(f"Reading cache: {self.fname}")
 
     def load(self):
         ''' Load a variable from the cache file. '''
@@ -48,7 +48,7 @@ class CacheFile():
         if self.file is None:
             self.file = open(self.fname, 'wb')
             pickle.dump(self.version_ref, self.file, pickle.HIGHEST_PROTOCOL)
-            print("Writing cache:", self.fname)
+            bs.logger.info(f"Writing cache: {self.fname}")
         pickle.dump(var, self.file, pickle.HIGHEST_PROTOCOL)
 
     def __enter__(self):

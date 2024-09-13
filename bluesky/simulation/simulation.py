@@ -92,7 +92,7 @@ class Simulation(Base):
 
     def step(self, dt_increment=0):
         ''' Perform one simulation timestep.
-        
+
             Call this function instead of update if you don't want to run with a fixed
             real-time rate.
         '''
@@ -110,7 +110,7 @@ class Simulation(Base):
             datalog.update()
             hooks.preupdate.trigger()
 
-            # Determine interval towards next timestep                
+            # Determine interval towards next timestep
             self.simt, self.simdt = simtime.step(dt_increment)
 
             # Update UTC time
@@ -124,7 +124,7 @@ class Simulation(Base):
             hooks.hold.trigger()
 
     def update(self):
-        ''' Perform a simulation update. 
+        ''' Perform a simulation update.
             This involves performing a simulation step, and when running in real-time mode
             (or a multiple thereof), sleeping an appropriate time. '''
         if self.state == bs.INIT:
@@ -173,7 +173,7 @@ class Simulation(Base):
         ''' Quit simulation.
             This function is called when a QUIT signal is received from
             the server, or when quit is called. '''
-        print(f'Simulation node {bs.net.node_id} quitting.')
+        bs.logger.info(f'Simulation node {bs.net.node_id} quitting.')
         self.state = bs.END
 
     def op(self):
@@ -284,7 +284,7 @@ class Simulation(Base):
 
             else:
                 try:
-                    self.utc = datetime.datetime.strptime(args[0], 
+                    self.utc = datetime.datetime.strptime(args[0],
                         '%H:%M:%S.%f' if '.' in args[0] else '%H:%M:%S')
                 except ValueError:
                     return False, 'Input time invalid'
