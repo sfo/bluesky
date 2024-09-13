@@ -1,3 +1,4 @@
+import bluesky as bs
 from matplotlib.path import Path
 import json
 
@@ -5,13 +6,13 @@ import json
 try:
     from rtree.index import Index
 except ImportError:
-    print('Geofence plugin needs rtree.')
+    bs.logger.error('Geofence plugin needs rtree.')
     class Index: ...
 try:
     from shapely.geometry import Point
     from shapely.ops import nearest_points
 except ImportError:
-    print('Geofence plugin needs shapely.')
+    bs.logger.error('Geofence plugin needs shapely.')
 
 import bluesky as bs
 from bluesky import stack
@@ -30,8 +31,8 @@ def init_plugin():
 
 @stack.command()
 def geofence(name: 'txt', top: float = 999999, bottom: float = -999999, *coordinates: float):
-    ''' Create a new geofence from the stack. 
-        
+    ''' Create a new geofence from the stack.
+
         Arguments:
         - name: The name of the new geofence
         - top: The top of the geofence in feet.
@@ -52,7 +53,7 @@ def savegeofences(filename: 'txt'):
     ''' Save the current loaded geofences.'''
     if filename[-5:] != '.json':
         filename = filename + '.json'
-    
+
     filepath = bs.resource(bs.settings.data_path) / 'geofences' / filename
 
     with open(filepath, 'w') as f:
@@ -74,7 +75,7 @@ def loadgeofences(filename: 'txt'):
         except FileNotFoundError:
             stack.echo(f'File empty or does not exist.')
             return
-        
+
     for geofence in loaded_geo_dict.values():
         Geofence(geofence['name'], geofence['coordinates'], geofence['top'], geofence['bottom'])
 
@@ -93,7 +94,7 @@ def loadgeojson(filename: 'txt', name_col: 'txt'='name', top_col: 'txt'='top', b
     # Load the geojson file into a geopandas dataframe
     if filename[-5:] != '.geojson':
         filename = filename + '.geojson'
-    
+
     filepath = bs.resource(bs.settings.data_path) / 'geofences' / filename
 
     with open(filepath, 'r') as f:
@@ -111,17 +112,17 @@ def loadgeojson(filename: 'txt', name_col: 'txt'='name', top_col: 'txt'='top', b
         if not poly_type == 'Polygon':
             continue
 
-        # get the name, top and bottom 
-        geo_props = geo_dict['properties'] 
+        # get the name, top and bottom
+        geo_props = geo_dict['properties']
 
-        
+
         # lowercase the name if it is not in the dictionary
         name_col = name_col.lower() if name_col not in geo_props.items() else name_col
         top_col = top_col.lower() if top_col not in geo_props.items() else top_col
         bottom_col = bottom_col.lower() if bottom_col not in geo_props.items() else bottom_col
 
         # if key is not in dictionary, skip
-        try: 
+        try:
             name = geo_props[name_col]
             top = geo_props[top_col]
             bottom = geo_props[bottom_col]
@@ -129,7 +130,7 @@ def loadgeojson(filename: 'txt', name_col: 'txt'='name', top_col: 'txt'='top', b
         except KeyError:
             stack.echo(f'Geofence has no {name_col}, {top_col} or {bottom_col} columns.')
             break
-        
+
         # get coordinates into lat1,lon1,lat2,lon2,lat3,lon3...
         coordinates = [coord for xycoord in coords for coord in xycoord[::-1]]
 
@@ -149,7 +150,7 @@ def drawgeofence(toggle: 'txt'='on'):
 
 class Geofence(areafilter.Poly):
     ''' BlueSky Geofence class.
-    
+
         This class subclasses Shape, and adds Geofence-specific data and methods.
     '''
     # Keep dicts of geofences by either name or rtree ID
@@ -169,7 +170,7 @@ class Geofence(areafilter.Poly):
     # "hits" contains the geofences that aircraft are about to hit (or are intruding)
     intrusions = dict()
     hits = dict()
-    
+
     # Unique intrusions dictionary: for each aircraft, keep track of the unique intrusions
     # that ever happened.
     unique_intrusions = dict()
@@ -257,7 +258,7 @@ class Geofence(areafilter.Poly):
             # First, a course detection based on geofence bounding boxes
             potential_intrusions, geo_ids = cls.intersecting([point[0], point[1]])
             ac_alt = point[2]/aero.ft
-           
+
             # Then a fine-grained intrusion detection
             for i, geofence in enumerate(potential_intrusions):
                 if ac_alt < geofence.top and geofence.checkInside(*point):
@@ -277,6 +278,6 @@ class Geofence(areafilter.Poly):
                             cls.unique_intrusions[acid][geo_ids[i]] = [geo_name, intrusion, p2.x, p2.y, bs.sim.simt]
                     else:
                         cls.unique_intrusions[acid][geo_ids[i]] = [geo_name, intrusion, p2.x, p2.y,  bs.sim.simt]
-                    
+
         bs.traf.geo_intrusions = cls.unique_intrusions
         return

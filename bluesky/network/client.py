@@ -25,7 +25,7 @@ class Client(Node):
 
         # Process any waiting stacked commands
         process()
-    
+
     def actnode(self, newact=None):
         ''' Set the new active node, or return the current active node. '''
         if newact:
@@ -59,7 +59,7 @@ class Client(Node):
                 else:
                     return
         return super()._subscribe(topic, from_group, to_group)
-    
+
     def _unsubscribe(self, topic, from_group=GROUPID_DEFAULT, to_group=''):
         if from_group == GROUPID_DEFAULT:
             from_group = GROUPID_SIM
@@ -72,8 +72,8 @@ class Client(Node):
         return super()._unsubscribe(topic, from_group, to_group)
 
     def addnodes(self, count=1, *node_ids, server_id=None):
-        ''' Tell the specified server to add 'count' nodes. 
-        
+        ''' Tell the specified server to add 'count' nodes.
+
             If provided, create these nodes with the specified node ids.
 
             If no server_id is specified, the corresponding server of the

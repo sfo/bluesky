@@ -14,20 +14,21 @@ from bluesky.ui.qtgl.mainwindow import MainWindow, Splash, DiscoveryDialog
 
 bs.settings.set_variable_defaults(qt_verbosity=1)
 
-print(('Using Qt ' + QT_VERSION_STR + ' for windows and widgets'))
+bs.logger.info(f'Using Qt {QT_VERSION_STR} for windows and widgets')
 
 def gui_msg_handler(msgtype, context, msg):
     if msgtype == QtMsgType.QtDebugMsg and bs.settings.qt_verbosity > 3:
-        print('Qt debug message:', msg)
+        bs.logger.debug(f'Qt debug message: {msg}')
     elif msgtype == QtMsgType.QtInfoMsg and bs.settings.qt_verbosity > 2:
-        print('Qt information message:', msg)
+        bs.logger.info(f'Qt information message: {msg}')
     elif msgtype == QtMsgType.QtWarningMsg and bs.settings.qt_verbosity > 1:
-        print('Qt gui warning:', msg)
+        bs.logger.warning(f'Qt gui warning: {msg}')
     elif msgtype == QtMsgType.QtCriticalMsg and bs.settings.qt_verbosity > 0:
-        print('Qt gui critical error:', msg)
+        bs.logger.critical(f'Qt gui critical error: {msg}')
     elif msgtype == QtMsgType.QtFatalMsg:
-        print('Qt gui fatal error:', msg)
-    
+        bs.logger.fatal(f'Qt gui fatal error: {msg}')
+    elif msgtype == QtMsgType.QtSystemMsg:
+        bs.logger.info(f'Qt gui system message: {msg}')
 
 
 def start(hostname=None):

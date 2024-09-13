@@ -1,3 +1,4 @@
+import bluesky as bs
 import os
 import inspect
 
@@ -40,9 +41,9 @@ class FuncObject(metaclass=FuncObjectMeta):
 
     def notimplemented(self, *args, **kwargs):
         if self.func is None:
-            print('Trying to call callback without assigned function or method')
+            bs.logger.warning('Trying to call callback without assigned function or method')
         else:
-            print(f'Trying to call method {self.func.__name__} for uninstantiated object')
+            bs.logger.warning(f'Trying to call method {self.func.__name__} for uninstantiated object')
 
     def update(self, func):
         self.func = func

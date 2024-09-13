@@ -117,14 +117,14 @@ class Route(Base):
             appi += 1
             name_ = name_[:-len_]+fmt_.format(appi)
         return name_
-    
+
     @stack.command(name = 'ADDWPTMODE')
     @staticmethod
     def addwptMode(acidx: 'acid', mode: 'txt' = None, value: float = None):
         ''' Changes the mode of the ADDWPT command to add waypoints of type 'mode'.
             The mode specified will be used for all ADDWPT commands that are called
             after this command.
-            
+
             Arguments:
             - acid: Aircraft id
             - mode: The mode to use for future waypoints. Options are:
@@ -133,19 +133,19 @@ class Route(Base):
         # Get aircraft route
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
-        # First, we want to check what 'mode' is, and then call addwptStack 
+        # First, we want to check what 'mode' is, and then call addwptStack
         # accordingly.
         if mode in ['FLYBY', 'FLYOVER', 'FLYTURN']:
             # We're just changing addwpt mode, call the appropriate function.
             Route.addwptStack(acidx, mode)
             return True
-        
+
         elif mode in  ['TURNSPEED', 'TURNSPD', 'TURNRADIUS', 'TURNRAD', 'TURNBANK', 'TURNPHI', \
                        'TURNHDGRATE', 'TURNHDG','TURNHDGR']:
             # We're changing the turn properties.
             Route.addwptStack(acidx, mode, value)
             return True
-            
+
         elif mode == None:
             # Just echo the current wptmode
             if acrte.swflyby == True and acrte.swflyturn == False:
@@ -159,7 +159,7 @@ class Route(Base):
             else:
                 stack.echo('Current ADDWPT mode is FLYTURN.')
                 return True
-            
+
     @stack.command(name='ADDWPT', annotations='acid,wpt,[alt,spd,wpinroute,wpinroute]', aliases=("WPTYPE",))
     @staticmethod
     def addwptStack(acidx, *args):  # args: all arguments of addwpt
@@ -167,7 +167,7 @@ class Route(Base):
         # First get the appropriate ac route
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
-        
+
         #debug print ("addwptStack:",args)
         #print("active = ",self.wpname[self.iactwp])
         #print(argsnwp
@@ -221,7 +221,7 @@ class Route(Base):
                         if len(acrte.last_2_defined) == 2 and acrte.last_2_defined[0] == acrte.last_2_defined[1]:
                             # Duplicates, pop the first one
                             acrte.last_2_defined.pop(0)
-                        
+
                 except:
                     return False,"Error in processing value of turn radius"
 
@@ -255,19 +255,19 @@ class Route(Base):
                         if len(acrte.last_2_defined) == 2 and acrte.last_2_defined[0] == acrte.last_2_defined[1]:
                             # Duplicates, pop the first one
                             acrte.last_2_defined.pop(0)
-                            
+
                 except:
                     return False, "Error in processing value of turn speed"
 
                 # Switch flyturn automatically when this is set
                 acrte.swflyby = False
                 acrte.swflyturn = True
-                
+
                 return True
 
 
             elif swwpmode == "TURNHDGRATE" or swwpmode == "TURNHDG" or swwpmode == "TURNHDGR":
-                
+
                 try:
                     if args[1] == "OFF":
                         acrte.turnhdgr = -999
@@ -290,7 +290,7 @@ class Route(Base):
                         if len(acrte.last_2_defined) == 2 and acrte.last_2_defined[0] == acrte.last_2_defined[1]:
                             # Duplicates, pop the first one
                             acrte.last_2_defined.pop(0)
-                            
+
                 except:
                     return False, "Error in processing value of turn heading rate"
 
@@ -299,17 +299,17 @@ class Route(Base):
                 acrte.swflyturn = True
 
                 return True
-            
+
             elif swwpmode == 'TURNBANK' or swwpmode == 'TURNPHI':
 
                 try:
                     if args[1] == "OFF":
                         acrte.turnbank = -999
-                    else:                    
+                    else:
                         # Cap the bank angle between 0 and 90 degrees
                         bankangle = max(0, min(args[1]/ft, 90))
                         acrte.turnbank = bankangle # [deg] desired bank angle
-                        
+
                         # Well, last we defined is turnbank, so append it to the list
                         acrte.last_2_defined.append('turnbank')
                         # Now, unless the first value is also acrte.turnbank, we set that var to -999 again
@@ -327,16 +327,16 @@ class Route(Base):
                         if len(acrte.last_2_defined) == 2 and acrte.last_2_defined[0] == acrte.last_2_defined[1]:
                             # Duplicates, pop the first one
                             acrte.last_2_defined.pop(0)
-                            
+
                 except:
                     return False, "Error in processing value of turn heading rate"
 
                 # Switch flyturn automatically when this is set
                 acrte.swflyby = False
                 acrte.swflyturn = True
-                
+
                 return True
-                    
+
 
 
         # Convert to positions
@@ -503,7 +503,7 @@ class Route(Base):
             bs.traf.swlnav[acidx] = True
 
         if afterwp and acrte.wpname.count(afterwp) == 0:
-            print(afterwp, acrte.wpname)
+            bs.logger.info(f"{afterwp} {acrte.wpname}")
             return True, "Waypoint " + afterwp + " not found\n" + \
                 "waypoint added at end of route"
         else:
@@ -512,7 +512,7 @@ class Route(Base):
     @stack.command
     def addwaypoints(acidx: 'acid', *args):
         ''' ADDWAYPOINTS: Add multiple waypoints to the route of an aircraft.
-        
+
             Arguments:
             - acid: Aircraft id
             - lat_i: Latitude of the ith waypoint
@@ -566,7 +566,7 @@ class Route(Base):
                 acrte.swflyturn = False
 
             wpidx = acrte.addwpt_simple(acidx, acid, Route.wplatlon, lat, lon, alt, spd)
-        
+
         # Direct to first waypoint
         acrte.direct(acidx, acrte.wpname[0])  # 0 if no orig
         #print("direct ",self.wpname[norig])
@@ -578,11 +578,11 @@ class Route(Base):
         # Check for success by checking inserted location in flight plan >= 0
         if wpidx < 0:
             return False, "Waypoint " + acid + " not added."
-        
+
         # # Direct aircraft to first waypoint
         # acrte.iactwp = 0
         # acrte.direct(acidx, acrte.wpname[0])
-        
+
 
     def addwpt_simple(self, iac, name, wptype, lat, lon, alt=-999., spd=-999.):
         """Adds waypoint in the most simple way possible"""
@@ -608,7 +608,7 @@ class Route(Base):
         if idx>=0:
             bs.traf.actwp.next_qdr[iac] = self.getnextqdr()
             bs.traf.actwp.swlastwp[iac] = (self.iactwp==self.nwp-1)
-            
+
         # Update autopilot settings
         if 0 <= self.iactwp < self.nwp:
             self.direct(iac, self.wpname[self.iactwp])
@@ -1018,7 +1018,7 @@ class Route(Base):
         # If we added a waypoint but iactwp is still -1, make it 0
         if wpok and self.iactwp < 0:
             self.iactwp = 0
-            
+
         if wpok and 0 <= self.iactwp < self.nwp:
             self.direct(iac, self.wpname[self.iactwp])
 
@@ -1028,7 +1028,7 @@ class Route(Base):
     @staticmethod
     def direct(acidx: 'acid', wpname: 'wpinroute'):
         """DIRECT acid wpname
-        
+
             Go direct to specified waypoint in route (FMS)"""
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
@@ -1093,13 +1093,13 @@ class Route(Base):
         # Save leg length & direction in actwp data
         bs.traf.actwp.curlegdir[acidx] = qdr_      #[deg]
         bs.traf.actwp.curleglen[acidx] = dist_*nm  #[m]
-        
+
         if acrte.wpflyturn[wpidx] and acrte.wpturnrad[wpidx]>0.: # turn radius specified
             turnrad = acrte.wpturnrad[wpidx]
         # Overwrite is hdgrate  defined
         if acrte.wpflyturn[wpidx] and acrte.wpturnhdgr[wpidx] > 0.: # heading rate specified
             turnrad = bs.traf.tas[acidx]*360./(2*np.pi*acrte.wpturnhdgr[wpidx])
-        
+
         # Update turndist so ComputeVNAV works, is there a next leg direction or not?
         if bs.traf.actwp.next_qdr[acidx] < -900.:
             local_next_qdr = qdr_
@@ -1108,8 +1108,8 @@ class Route(Base):
 
         # Calculate turn dist (and radius which we do not use now, but later) now for scalar variable [acidx]
         bs.traf.actwp.turndist[acidx], turnrad, turnspd, turnbank, turnhdgr = \
-            bs.traf.actwp.calcturn(acidx, bs.traf.tas[acidx], qdr_, 
-                                    local_next_qdr, bs.traf.actwp.turnbank[acidx], 
+            bs.traf.actwp.calcturn(acidx, bs.traf.tas[acidx], qdr_,
+                                    local_next_qdr, bs.traf.actwp.turnbank[acidx],
                                     bs.traf.actwp.turnrad[acidx],bs.traf.actwp.turnspd[acidx] ,
                                     bs.traf.actwp.turnhdgr[acidx], bs.traf.actwp.flyturn[acidx],
                                     bs.traf.actwp.flyby[acidx])  # update turn distance for VNAV
@@ -1127,7 +1127,7 @@ class Route(Base):
     @staticmethod
     def SetRTA(acidx: 'acid', wpname: 'wpinroute', time: 'time'):  # all arguments of setRTA
         """ RTA acid, wpname, time
-        
+
             Add RTA to waypoint record"""
         acid = bs.traf.id[acidx]
         acrte = Route._routes[acid]
@@ -1223,12 +1223,12 @@ class Route(Base):
                                 self.wplat[trnidx+1], self.wplon[trnidx+1])
         else:
             local_next_qdr = qdr
-            
+
         turndist, turnrad, turnspd, turnbank, turnhdgr = \
-        bs.traf.actwp.calcturn(i, bs.traf.tas[i], qdr, 
-                    local_next_qdr, self.wpturnbank[trnidx], 
+        bs.traf.actwp.calcturn(i, bs.traf.tas[i], qdr,
+                    local_next_qdr, self.wpturnbank[trnidx],
                     self.wpturnrad[trnidx],self.wpturnspd[trnidx],self.wpturnhdgr[trnidx], True, False)
-        
+
         return [self.wplat[trnidx], self.wplon[trnidx], turnspd, turnrad, turnhdgr, trnidx]
 
     def getnextwp(self):
@@ -1352,7 +1352,7 @@ class Route(Base):
     @staticmethod
     def delwpt(acidx: 'acid', wpname: 'wpinroute'):
         """DELWPT acid,wpname
-        
+
            Delete a waypoint from a route (FMS). """
         # Delete complete route?
         if wpname == "*":
@@ -1602,14 +1602,14 @@ class Route(Base):
         else:
             nextqdr = -999.
         return nextqdr
-    
+
     @stack.command
     @staticmethod
     def cruisespd(acidx: 'acid', spd: 'spd'):
         """Sets the cruise speed of an aircraft in the autopilot. This speed is applied
         after the aircraft exits a turn.
         """
-        
+
         # First, make sure that the velocity is within the performance limits of the aircraft.
         minspd = bs.traf.perf.vmin[acidx]
         maxspd = bs.traf.perf.vmax[acidx]

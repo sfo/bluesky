@@ -1,6 +1,7 @@
 """ BlueSky implementation of signals that can trigger one or more functions
     when a signal is emitted. """
 from bluesky.core.funcobject import FuncObject
+import bluesky as bs
 
 
 class SignalFactory(type):
@@ -48,9 +49,9 @@ class Signal(metaclass=SignalFactory):
         try:
             self.subscribers.remove(FuncObject(func))
         except AttributeError:
-            print(f'Function {func.__name__} is not connected to a signal.')
+            bs.logger.error(f'Function {func.__name__} is not connected to a signal.')
         except ValueError:
-            print(f'Function {func.__name__} is not connected to Signal {self.topic}.')
+            bs.logger.error(f'Function {func.__name__} is not connected to Signal {self.topic}.')
 
 
 def subscriber(func=None, topic=''):

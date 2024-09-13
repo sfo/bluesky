@@ -39,7 +39,7 @@ class CoeffBS:
         else:
             converted = float(value)
             if not self.warned:
-                print("traf/perf.py convert function: Unit mismatch. Could not find ", unit)
+                bs.logger.warning(f"traf/perf.py convert function: Unit mismatch. Could not find {unit}")
                 self.warned = True
 
         return converted

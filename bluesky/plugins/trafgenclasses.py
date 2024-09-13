@@ -2,6 +2,7 @@ import random
 from math import degrees,radians,cos,sin,atan2,sqrt
 
 
+import bluesky as bs
 from bluesky import stack,traf,sim,tools,navdb
 from bluesky.tools.position import txt2pos
 from bluesky.tools.geo import kwikqdrdist,kwikpos,latlondist,qdrdist
@@ -65,7 +66,7 @@ class Source():
                     self.lat,self.lon,hdg = getseg(segname)
 
             else:
-                print("ERROR: trafgen class Source called for "+name+". Position not found")
+                bs.logger.error(f"trafgen class Source called for {name}. Position not found")
                 self.lat,self.lon = 0.0,0.0
 
 
@@ -460,7 +461,7 @@ class Drain():
                     self.lat,self.lon,hdg = getseg(segname)
 
             else:
-                print("ERROR: trafgen class Drain called for "+name+". Position not found")
+                bs.logger.error(f"trafgen class Drain called for {name}. Position not found")
                 self.lat,self.lon = 0.0,0.0
 
 
@@ -659,10 +660,8 @@ class Drain():
                     lat,lon = self.origlat[iorig],self.origlon[iorig]
                     hdg,dist = qdrdist(lat,lon,self.lat,self.lon)
                 else:
-                    print("Warning update drain",self.name,"called with no origins present!")
                     hdg = random.random()*360.
-                    print("using random segment",int(hdg+180)%360)
-
+                    bs.logger.warning(f"Update drain {self.name} called with no origins present!. Using random heading {int(hdg+180)%360}.")
                     incirc = False
 
                 if not incirc:
