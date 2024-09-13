@@ -324,7 +324,7 @@ class BADA(PerfBase):
         # for now, BADA aircraft have the same acceleration as deceleration
         self.gr_acc[-n:]    = coeff.gr_acc
 
-    def available_actypes(self) -> set[str]:
+    def available_actypes(self, fixwing_only: bool = True) -> set[str]:
         return set(coeff_bada.synonyms.keys())
 
     def update(self, dt):
