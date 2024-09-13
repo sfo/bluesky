@@ -77,7 +77,7 @@ setup(
     project_urls={
         'Source': 'https://github.com/TUDelft-CNS-ATM/bluesky',
     },
-    include_dirs=[get_numpy_include()],
+    include_dirs=[get_numpy_include(), 'bluesky/tools/geo/src_cpp'],
     ext_modules=[Extension('bluesky.tools.geo._cgeo', ['bluesky/tools/geo/src_cpp/_cgeo.cpp']),
                 Extension('bluesky.traffic.asas.cstatebased', ['bluesky/traffic/asas/src_cpp/cstatebased.cpp'], include_dirs=['bluesky/tools/src_cpp'])]
 )
