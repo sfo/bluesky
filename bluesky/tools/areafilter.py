@@ -1,11 +1,12 @@
 """Area filter module"""
+import bluesky as bs
 from weakref import WeakValueDictionary
 import numpy as np
 from matplotlib.path import Path
 try:
     from rtree.index import Index
 except (ImportError, OSError):
-    print('Warning: RTree could not be loaded. areafilter get_intersecting and get_knearest won\'t work')
+    bs.logger.warning('RTree could not be loaded. areafilter get_intersecting and get_knearest won\'t work')
     class Index:
         ''' Dummy index class for installations where rtree is missing
             or doesn't work.

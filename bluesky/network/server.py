@@ -80,7 +80,7 @@ class Server(Thread):
         self.fe_event.bind(f'tcp://*:{bs.settings.event_port}')
         self.fe_stream = ctx.socket(zmq.XPUB)
         self.fe_stream.bind(f'tcp://*:{bs.settings.stream_port}')
-        print(f'Accepting event connections on port {bs.settings.event_port},',
+        bs.logger.info(f'Accepting event connections on port {bs.settings.event_port},',
               f'and stream connections on port {bs.settings.stream_port}')
 
         # Create connection points for sim workers
@@ -99,7 +99,7 @@ class Server(Thread):
 
         if self.discovery:
             poller.register(self.discovery.handle, zmq.POLLIN)
-        print(f'Discovery is {"en" if self.discovery else "dis"}abled')
+        bs.logger.info(f'Discovery is {"en" if self.discovery else "dis"}abled')
 
         # Start the first simulation node
         self.addnodes(startscn=self.startscn)
@@ -108,7 +108,7 @@ class Server(Thread):
             try:
                 events = dict(poller.poll(None))
             except zmq.ZMQError:
-                print('ERROR while polling')
+                bs.logger.error('ERROR while polling')
                 break  # interrupted
 
             # The socket with incoming data

@@ -1,5 +1,6 @@
 """ BlueSky implementation of signals that can trigger one or more functions
     when a signal is emitted. """
+import bluesky as bs
 
 
 class SignalFactory(type):
@@ -44,5 +45,5 @@ class Signal(metaclass=SignalFactory):
         try:
             self.__subscribers.remove(func)
         except ValueError:
-            print('Warning: function %s not removed '
+            bs.logger.warning('function %s not removed '
                   'from signal %s'%(func,self))

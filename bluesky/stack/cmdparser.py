@@ -2,6 +2,7 @@
 import inspect
 import sys, os
 from typing import Dict
+import bluesky as bs
 from bluesky.stack.argparser import Parameter, getnextarg, ArgumentError
 
 
@@ -34,7 +35,7 @@ class Command:
         else:
             # for subclasses reimplementing stack functions we keep only one
             # Command object
-            print(f'Attempt to reimplement {name} from {cmdobj.callback} to {func}')
+            bs.logger.info(f'Attempt to reimplement {name} from {cmdobj.callback} to {func}')
             if not isinstance(cmdobj, cls):
                 raise TypeError(f'Error reimplementing {name}: '
                                 f'A {type(cmdobj).__name__} cannot be '

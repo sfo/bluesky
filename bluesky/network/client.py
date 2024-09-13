@@ -2,7 +2,7 @@
 import os
 import zmq
 import msgpack
-import bluesky
+import bluesky as bs
 from bluesky import settings
 from bluesky.core import Signal
 from bluesky.stack.clientstack import stack, process
@@ -34,10 +34,10 @@ class Client:
         self.stream_received = Signal('stream_received')
 
         # Tell bluesky that this client will manage the network I/O
-        bluesky.net = self
+        bs.net = self
         # If no other object is taking care of this, let this client act as screen object as well
-        if not bluesky.scr:
-            bluesky.scr = self
+        if not bs.scr:
+            bs.scr = self
 
     def start_discovery(self):
         ''' Start UDP-based discovery of available BlueSky servers. '''
@@ -73,7 +73,7 @@ class Client:
     def actnode_changed(self, newact):
         ''' Default actnode change handler for Client. Override or monkey-patch this function
             to implement actual actnode change handling. '''
-        print('Client active node changed.')
+        bs.logger.info('Client active node changed.')
 
     def subscribe(self, streamname, node_id=b'', actonly=False):
         ''' Subscribe to a stream.
@@ -118,7 +118,7 @@ class Client:
         self.event_io.connect(econ)
         self.send_event(b'REGISTER')
         self.host_id = self.event_io.recv_multipart()[0]
-        print(f'Client {self.client_id} connected to host {self.host_id}')
+        bs.logger.info(f'Client {self.client_id} connected to host {self.host_id}')
         self.stream_in.connect(scon)
 
         self.poller.register(self.event_io, zmq.POLLIN)
@@ -127,7 +127,7 @@ class Client:
     def echo(self, text, flags=None, sender_id=None):
         ''' Default client echo function. Prints to console.
             Overload this function to process echo text in your GUI. '''
-        print(text)
+        bs.logger.info(text)
 
     def update(self):
         ''' Client periodic update function.
@@ -174,7 +174,7 @@ class Client:
                 strmname = msg[0][:-5]
                 sender_id = msg[0][-5:]
                 if self._getroute(sender_id) is None:
-                    print('Client: Skipping stream data from unknown node')
+                    bs.logger.warning('Client: Skipping stream data from unknown node')
                     return False
                 pydata = msgpack.unpackb(msg[1], object_hook=decode_ndarray, raw=False)
                 self.stream(strmname, pydata, sender_id)
@@ -198,7 +198,7 @@ class Client:
         if newact:
             route = self._getroute(newact)
             if route is None:
-                print('Error selecting active node (unknown node)')
+                bs.logger.error('Error selecting active node (unknown node)')
                 return None
             # Unsubscribe from previous node, subscribe to new one.
             if newact != self.act:
@@ -233,6 +233,6 @@ class Client:
         else:
             rte = self._getroute(target)
             if rte is None:
-                print(f'Client: Not sending event {name} to unknown target {target}')
+                bs.logger.warning(f'Client: Not sending event {name} to unknown target {target}')
                 return
             self.event_io.send_multipart(rte + [target, name, pydata])
