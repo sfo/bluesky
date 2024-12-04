@@ -52,9 +52,9 @@ def process():
             success = False
             echoflags = bs.BS_CMDERR
             if not argstring:
-                echotext = f'Unknown command or aircraft: {cmd}'
+                echotext = f'Unknown command or aircraft: {cmdline}'
             else:
-                echotext = f'Unknown command: {cmd}'
+                echotext = f'Unknown command: {cmdline}'
 
         # Always return on command
         if echotext:

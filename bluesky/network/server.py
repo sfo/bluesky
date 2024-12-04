@@ -80,8 +80,10 @@ class Server(Thread):
         self.fe_event.bind(f'tcp://*:{bs.settings.event_port}')
         self.fe_stream = ctx.socket(zmq.XPUB)
         self.fe_stream.bind(f'tcp://*:{bs.settings.stream_port}')
-        bs.logger.info(f'Accepting event connections on port {bs.settings.event_port},',
-              f'and stream connections on port {bs.settings.stream_port}')
+        bs.logger.info(
+            f'Accepting event connections on port {bs.settings.event_port}, '
+            f'and stream connections on port {bs.settings.stream_port}'
+        )
 
         # Create connection points for sim workers
         self.be_event  = ctx.socket(zmq.ROUTER)

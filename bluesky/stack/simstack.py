@@ -116,9 +116,9 @@ def process(from_pcall=None):
             success = False
             echoflags = bs.BS_CMDERR
             if not argstring:
-                echotext = f'Unknown command or aircraft: {cmd}'
+                echotext = f'Unknown command or aircraft: {cmdline}'
             else:
-                echotext = f'Unknown command: {cmd}'
+                echotext = f'Unknown command: {cmdline}'
 
         # Recording of actual validated commands
         if success:
