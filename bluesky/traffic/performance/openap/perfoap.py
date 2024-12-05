@@ -108,7 +108,7 @@ class OpenAP(PerfBase):
             all_ac_engs = list(self.coeff.acs_fixwing[actype]["engines"].keys())
             self.engthrmax[-n:] = self.coeff.acs_fixwing[actype]["engines"][
                 all_ac_engs[0]
-            ]["thr"]
+            ]["max_thrust"]
             self.engbpr[-n:] = self.coeff.acs_fixwing[actype]["engines"][
                 all_ac_engs[0]
             ]["bpr"]
@@ -171,7 +171,7 @@ class OpenAP(PerfBase):
         self.vmin[-n:], self.vmax[-n:] = self._construct_v_limits(mask)
 
     def available_actypes(self, fixwing_only: bool = True) -> set[str]:
-        fixwing = set(self.coeff.dragpolar_fixwing)
+        fixwing = set(self.coeff.actypes_fixwing)
         if fixwing_only:
             return fixwing
         return fixwing | set(self.coeff.actypes_rotor)
