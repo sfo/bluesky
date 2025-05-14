@@ -190,6 +190,9 @@ class Legacy(PerfBase):
         self.ffid[-n:]      = np.where(turboprops, 1. , coeffBS.ffid[jetidx]*coeffBS.n_eng[coeffidx]) / 60.0
         self.ffap[-n:]      = np.where(turboprops, 1. , coeffBS.ffap[jetidx]*coeffBS.n_eng[coeffidx]) / 60.0
 
+    def available_actypes(self, fixwing_only: bool = True) -> set[str]:
+        return set(coeffBS.atype)
+
     def update(self, dt):
         ''' Periodic update function for performance calculations. '''
         swbada = False # no-bada version
