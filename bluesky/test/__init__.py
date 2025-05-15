@@ -12,6 +12,7 @@ It tests BlueSky running in either Python2 or 3.
 """
 import inspect
 import time
+import bluesky as bs
 from bluesky.tools.network import as_bytes
 
 
@@ -82,7 +83,7 @@ def printrecv(data, stackpos=2):
     Args:
         data: Received data.
     """
-    print(f"-- {funname(stackpos)} --: Data received: {data}")
+    bs.logger.info(f"-- {funname(stackpos)} --: Data received: {data}")
 
 
 def wait_for(test, iters, period):

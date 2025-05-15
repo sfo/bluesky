@@ -6,11 +6,11 @@ def init():
     # Load the palette file selected in settings
     pfile = bs.resource(bs.settings.gfx_path) / 'palettes' / bs.settings.colour_palette
     if pfile.is_file():
-        print('Loading palette ' + bs.settings.colour_palette)
+        bs.logger.info(f'Loading palette {bs.settings.colour_palette}')
         exec(compile(open(pfile).read(), pfile, 'exec'), globals())
         return True
     else:
-        print('Palette file not found ' + pfile)
+        bs.logger.error(f'Palette file not found {pfile}')
         return False
 
 

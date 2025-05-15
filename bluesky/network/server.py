@@ -42,7 +42,7 @@ class Server(Thread):
         self.sim_nodes = set()
         self.all_nodes = set()
         self.avail_nodes = set()
-        
+
         # Information to pass on to spawned nodes
         self.altconfig = altconfig
         self.startscn = startscn
@@ -95,7 +95,7 @@ class Server(Thread):
 
     def run(self):
         ''' The main loop of this server. '''
-        print(f'Starting server with id', self.server_id)
+        bs.logger.info(f'Starting server with id {self.server_id}')
         # For the server, send/recv ports are reversed
         self.sock_recv.bind(f'tcp://*:{bs.settings.send_port}')
         self.sock_send.bind(f'tcp://*:{bs.settings.recv_port}')
@@ -107,7 +107,7 @@ class Server(Thread):
 
         if self.discovery:
             self.poller.register(self.discovery.handle, zmq.POLLIN)
-        print(f'Discovery is {"en" if self.discovery else "dis"}abled')
+        bs.logger.info(f'Discovery is {"en" if self.discovery else "dis"}abled')
 
         # Create subscription for messages targeted at this server
         self.sock_recv.send_multipart([b'\x01' + self.server_id])
@@ -119,7 +119,7 @@ class Server(Thread):
             try:
                 events = dict(self.poller.poll(None))
             except zmq.ZMQError:
-                print('ERROR while polling')
+                bs.logger.error('ERROR while polling')
                 break  # interrupted
 
             # The socket with incoming data
@@ -154,7 +154,7 @@ class Server(Thread):
                                 self.sim_nodes.add(msg[0][1:])
                                 self.send(b'REQUEST', ['STATECHANGE'], msg[0][1:])
                         elif msg[0][0] == MSG_UNSUBSCRIBE and msg[0][1] == GROUPID_SIM and msg[0][1:] in self.spawned_processes:
-                            print('Removing node', msg[0][1:])
+                            bs.logger.info(f'Removing node {msg[0][1:]}')
                             self.sim_nodes.discard(msg[0][1:])
                     # Always forward
                     self.sock_recv.send_multipart(msg)
@@ -207,19 +207,19 @@ class Server(Thread):
                             self.sock_send.send_multipart([sender_id + topic + self.server_id, data])
                     else:
                         self.sock_send.send_multipart(msg)
-        print('Server quit. Stopping nodes:')
+        bs.logger.info('Server quit. Stopping nodes:')
         for pid, p in self.spawned_processes.items():
-            # print('Stopping node:', pid, end=' ')
+            bs.logger.info(f'\tStopping node {pid}')
             # p.send_signal(signal.SIGTERM)
             p.terminate()
             p.wait()
             # Inform network that node is removed
             self.sock_recv.send_multipart([b'\x00' + pid])
-            # print('done')
-        print('Closing connections:', end=' ')
+            # bs.logger.info('done')
+        bs.logger.info('Closing connections:')
         self.poller.unregister(self.sock_recv)
         self.poller.unregister(self.sock_send)
         self.sock_recv.close()
         self.sock_send.close()
         zmq.Context.instance().destroy()
-        print('done')
+        bs.logger.info('done')

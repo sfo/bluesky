@@ -1,6 +1,7 @@
 ''' Loader functions for navigation visualisation data. '''
 import pickle
 
+import bluesky as bs
 from bluesky import settings
 from bluesky.tools import cachefile
 from bluesky.ui.loadvisuals_txt import load_coastline_txt, load_aptsurface_txt
@@ -23,7 +24,7 @@ def load_coastlines():
             coastvertices = cache.load()
             coastindices = cache.load()
         except (pickle.PickleError, cachefile.CacheError) as e:
-            print(e.args[0])
+            bs.logger.error(e.args[0])
             coastvertices, coastindices = load_coastline_txt()
             cache.dump(coastvertices)
             cache.dump(coastindices)
@@ -43,7 +44,7 @@ def load_aptsurface():
             apt_ctr_lon = cache.load()
             apt_indices = cache.load()
         except (pickle.PickleError, cachefile.CacheError) as e:
-            print(e.args[0])
+            bs.logger.error(e.args[0])
             vbuf_asphalt, vbuf_concrete, vbuf_runways, vbuf_rwythr, apt_ctr_lat, \
                 apt_ctr_lon, apt_indices = load_aptsurface_txt()
             cache.dump(vbuf_asphalt)
