@@ -1,10 +1,12 @@
 ''' BlueSky Client class. '''
 from collections import defaultdict
 
+import bluesky as bs
 from bluesky.core.signal import Signal
-from bluesky.stack.clientstack import process
+from bluesky.network.common import GROUPID_CLIENT, GROUPID_DEFAULT, GROUPID_SIM, genid
 from bluesky.network.node import Node
-from bluesky.network.common import genid, GROUPID_CLIENT, GROUPID_SIM, GROUPID_DEFAULT
+from bluesky.stack.clientstack import process
+
 
 class Client(Node):
     def __init__(self, group_id=GROUPID_CLIENT):
@@ -30,7 +32,7 @@ class Client(Node):
         ''' Set the new active node, or return the current active node. '''
         if newact:
             if newact not in self.nodes:
-                print('Error selecting active node (unknown node)')
+                bs.logger.error('Error selecting active node (unknown node)')
                 return None
             if self.act_id is None:
                 # This is the first time an active node is selected
