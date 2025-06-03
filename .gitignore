@@ -2,6 +2,7 @@
 output
 plugins/*
 !plugins/safety_aman
+!plugins/rlgym
 cache
 scenario/ic.scn
 bluesky/resources/grib
