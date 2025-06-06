@@ -16,6 +16,7 @@ logger.setLevel(logging.INFO)
 
 __gym = None
 
+
 # Initialization function of the plugin as required by BlueSky to identify it.
 def init_plugin() -> dict[str, Any]:
     global __gym
@@ -42,7 +43,7 @@ class BlueSkyGym(Base):
             logger.debug("No environment initialized. Cannot perform action.")
             return
 
-        if  self._observation is None:
+        if self._observation is None:
             logger.debug("No new observation. Cannot perform action.")
             return
 
@@ -95,15 +96,12 @@ class BlueSkyGym(Base):
             if self._env:
                 self.reset_gym()
             else:
+                environments = "\n- ".join([''] +
+                    [env for env in registry if env.startswith("bluesky_gym/")]
+                )
                 return (
                     True,
-                    f"Environments available: {
-                        [
-                            env
-                            for env in registry
-                            if env.startswith('bluesky_gym/')
-                        ]
-                    }",
+                    f"Environments available: {environments}",
                 )
         else:
             self._env = gym.make(
