@@ -1,36 +1,42 @@
 import logging
-from typing import Any, override
+from typing import Any
 
 import gymnasium as gym
 import numpy as np
-from bluesky import core, sim, stack, traf
+from bluesky import sim, stack
+from bluesky.core import Base
+from bluesky.core.timedfunction import timed_function
 from bluesky_gym.envs import BlueSkyEnv
 from gymnasium import registry
+from gymnasium.core import ObsType
 
-logging.basicConfig(level=logging.DEBUG)  # FIXME - this should not happen in the plugin
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
+
+__gym = None
 
 # Initialization function of the plugin as required by BlueSky to identify it.
 def init_plugin() -> dict[str, Any]:
-    BlueSkyGym()
+    global __gym
+    __gym = BlueSkyGym()
     return {
         "plugin_name": "BlueSky Gym",
         "plugin_type": "sim",
+        "reset": __gym.reset_gym,
     }
 
 
-class BlueSkyGym(core.Entity):
+class BlueSkyGym(Base):
     def __init__(self) -> None:
         super().__init__()
         logger.info("Welcome to the Gym!")
         self._env: BlueSkyEnv | None = None
-        self._observation: dict | None = None
+        self._observation: ObsType | None = None  # type: ignore
         self._last_radar_update = -np.inf
         self._action_duration = None
 
-    @core.timed_function(name="rl_action", hook="preupdate")
+    @timed_function(name="rl_action", hook="preupdate")
     def perform_action(self) -> None:
         if self._env is None:
             logger.debug("No environment initialized. Cannot perform action.")
@@ -52,7 +58,7 @@ class BlueSkyGym(core.Entity):
 
     # in between preupdate and update hook, the simulation kicks in and updates traffic.
 
-    @core.timed_function(name="rl_reward", hook="update")
+    @timed_function(name="rl_reward", hook="update")
     def collect_reward_and_observation(self) -> None:
         if self._env is None:
             logger.debug("No environment initialized. Cannot collect rewards.")
@@ -78,18 +84,16 @@ class BlueSkyGym(core.Entity):
         reward = final_reward - self._action_duration - penalty
         info = {}
 
-        # FIXME - this should propably be handled during action, so agent can react on final reward
+        # FIXME - should be handled during action, so agent can react on final reward
         if terminated or truncated:
-            logger.debug("Environment terminated or truncated. Resetting the traffic object")
-            # this calls reset of all the TrafficArray classes (also this one), so no need to self.reset
-            traf.reset()
+            logger.debug("Resetting the traffic object")
+            self.reset_environment()
 
     @stack.command
     def train(self, environment: str | None = None, algorithm: str | None = None):
         if environment is None:
             if self._env:
-                self._env.close()
-                self._env = None
+                self.reset_gym()
             else:
                 return (
                     True,
@@ -115,12 +119,13 @@ class BlueSkyGym(core.Entity):
 
     def reset_environment(self) -> None:
         logger.debug("Resetting the environment.")
+        assert self._env is not None
         self._observation, _ = self._env.reset()
         self._last_radar_update = -np.inf
         self._action_duration = None
 
-    @override
-    def reset(self) -> None:
+    def reset_gym(self) -> None:
         logger.info("Resetting the Gym.")
         if self._env is not None:
-            self.reset_environment()
+            self._env.close()
+        self._env = None
