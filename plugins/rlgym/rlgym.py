@@ -92,12 +92,15 @@ class BlueSkyGym(Base):
 
     @stack.command
     def train(self, environment: str | None = None, algorithm: str | None = None):
+        if (environment is None) ^ (algorithm is None):
+            return True, "Error: Missing environment or algorithm!"
+
         if environment is None:
             if self._env:
                 self.reset_gym()
             else:
-                environments = "\n- ".join([''] +
-                    [env for env in registry if env.startswith("bluesky_gym/")]
+                environments = "\n- ".join(
+                    [""] + [env for env in registry if env.startswith("bluesky_gym/")]
                 )
                 return (
                     True,
