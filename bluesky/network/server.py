@@ -31,7 +31,9 @@ def split_scenarios(scentime, scencmd):
 
 class Server(Thread):
     ''' Implementation of the BlueSky simulation server. '''
-    def __init__(self, discovery, altconfig=None, startscn=None):
+    def __init__(
+        self, discovery, altconfig=None, startscn=None, spawn_default_node: bool = True
+    ):
         super().__init__()
         self.spawned_processes = dict()
         self.running = True
@@ -51,6 +53,8 @@ class Server(Thread):
             self.discovery = Discovery(self.server_id, is_client=False)
         else:
             self.discovery = None
+
+        self.spawn_default_node = spawn_default_node
 
         # Get ZMQ context
         ctx = zmq.Context.instance()
@@ -113,11 +117,13 @@ class Server(Thread):
         self.sock_recv.send_multipart([b'\x01' + self.server_id])
 
         # Start the first simulation node
-        self.addnodes(startscn=self.startscn)
+        if self.spawn_default_node:
+            self.addnodes(startscn=self.startscn)
 
         while self.running:
             try:
-                events = dict(self.poller.poll(None))
+                # if no client is connected, timeout guarantees for the main loop to run
+                events = dict(self.poller.poll(1000))
             except zmq.ZMQError:
                 print('ERROR while polling')
                 break  # interrupted
