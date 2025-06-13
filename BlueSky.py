@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 """ Main BlueSky start script """
+import logging
 import sys
+
 from bluesky.__main__ import main
 
+logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
     # Run mainloop if BlueSky is called directly
