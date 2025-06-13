@@ -29,9 +29,7 @@ sim = None
 scr = None
 server = None
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 def init(mode='sim', configfile=None, scenfile=None, discoverable=False,
