@@ -2,6 +2,7 @@
 import importlib
 # from bluesky import settings, stack
 from bluesky.pathfinder import resource
+import logging
 
 
 __all__ = ['settings', 'stack', 'tools', 'cmdargs']
@@ -28,6 +29,8 @@ sim = None
 scr = None
 server = None
 
+logger = logging.getLogger(__name__)
+
 
 def init(mode='sim', configfile=None, scenfile=None, discoverable=False,
          gui=None, detached=False, workdir=None, group_id=None, **kwargs):
@@ -37,7 +40,7 @@ def init(mode='sim', configfile=None, scenfile=None, discoverable=False,
         - mode: Running mode of this bluesky process [sim/client/server]
         - configfile: Load a different configuration file [filename]
         - scenfile: Start with a running scenario [filename]
-        - discoverable: Make server discoverable through UDP (only relevant 
+        - discoverable: Make server discoverable through UDP (only relevant
           when this process is running a server) [True/False]
         - gui: Gui type (only when mode is client or server) [qtgl/pygame/console]
         - detached: Run with or without networking (only when mode is sim) [True/False]

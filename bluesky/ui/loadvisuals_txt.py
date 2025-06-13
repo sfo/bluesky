@@ -57,7 +57,7 @@ def load_coastline_txt():
     coast = []
     clat = clon = 0.0
     with open(bs.resource(bs.settings.navdata_path) / 'coastlines.dat', 'r') as f:
-        print("Reading coastlines.dat")
+        bs.logger.info("Reading coastlines.dat")
         for line in f:
             line = line.strip()
             if not (line == "" or line[0] == '#'):
@@ -90,7 +90,7 @@ if bs.gui == 'qtgl':
         def __init__(self, text):
             if QApplication.instance() is None:
                 self.dialog = None
-                print(text)
+                bs.logger.info(text)
             else:
                 self.dialog = QProgressDialog(text, 'Cancel', 0, 100)
                 # self.dialog.setWindowFlags(Qt.WindowStaysOnTopHint)
@@ -102,7 +102,8 @@ if bs.gui == 'qtgl':
                 self.dialog.setValue(int(value))
                 QApplication.processEvents()
             else:
-                print('Progress: %.2f%% done' % value)
+                # TODO - better use proper progress bar like tqdm
+                bs.logger.info(f'Progress: {value:.2f}% done')
 
         def close(self):
             if self.dialog:
@@ -128,7 +129,7 @@ if bs.gui == 'qtgl':
         bytecount = 0
         zfile = ZipFile(bs.resource(bs.settings.navdata_path) / 'apt.zip')
         fsize = float(zfile.getinfo('apt.dat').file_size)
-        print("Reading apt.dat from apt.zip")
+        bs.logger.info("Reading apt.dat from apt.zip")
         with zfile.open('apt.dat', 'r') as f:
             for line in f:
                 bytecount += len(line)

@@ -156,7 +156,7 @@ class MainWindow(QMainWindow, Base):
         try:
             self.docwin = DocWindow(self)
         except Exception as e:
-            print('Couldnt make docwindow:', e)
+            bs.logger.error(f'Couldnt make docwindow: {e}')
         # self.aman = AMANDisplay()
         
 
@@ -547,7 +547,7 @@ class MainWindow(QMainWindow, Base):
                 scenpath = path.as_posix()
             else:
                 scenpath = path
-            
+
             if platform.system().lower() == 'darwin':
                 response = QFileDialog.getOpenFileName(self, 'Open file', scenpath, 'Scenario files (*.scn)')
             else:

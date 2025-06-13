@@ -9,6 +9,7 @@ Modules:
 
 Created by  : Jacco M. Hoekstra
 """
+import bluesky as bs
 from time import strftime, gmtime
 import numpy as np
 
@@ -227,7 +228,7 @@ def txt2lat(lattxt):
                     lat = lat + f * abs(float(xtxt)) / float(div)
                     div = div * 60
                 except ValueError:
-                    print("txt2lat value error:",lattxt)
+                    bs.logger.error(f"txt2lat value error: {lattxt}")
                     return 0.0
     else:
         lat = float(txt)
@@ -265,7 +266,7 @@ def txt2lon(lontxt):
                     try:
                         lon = lon + f * abs(float(xtxt)) / float(div)
                     except ValueError:
-                        print("txt2lon value error:",lontxt)
+                        bs.logger.error(f"txt2lon value error: {lontxt}")
                         return 0.0
 
                 div = div * 60
@@ -278,7 +279,7 @@ def txt2lon(lontxt):
                     f = 1.
                 lon = f*abs(float(txt))
             except ValueError:
-                print("txt2lon value error:",lontxt)
+                bs.logger.error(f"txt2lon value error: {lontxt}")
                 return 0.0
 
     return lon

@@ -160,7 +160,7 @@ def readscn(fname):
             except (ValueError, IndexError):
                 # nice try, we will just ignore this syntax error
                 if not (len(line.strip()) > 0 and line.strip()[0] == "#"):
-                    print("except this:" + line)
+                    bs.logger.error(f"except this: {line}")
 
 
 @command(aliases=('CALL',), brief="PCALL filename [REL/ABS/args]")
@@ -342,7 +342,7 @@ def showhelp(cmd:'txt'='', subcmd:'txt'=''):
 
         Arguments:
         - cmd: Argument can refer to:
-            - Command name to display help for. 
+            - Command name to display help for.
             - Call HELP >filename to generate a CSV file with help text for all commands.
     """
 
