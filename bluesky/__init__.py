@@ -96,7 +96,7 @@ def init(mode='sim', configfile=None, scenfile=None, discoverable=False,
     # If mode is server-gui or server-headless start the networking server
     if mode == 'server':
         from bluesky.network.server import Server
-        server = Server(discoverable, configfile, scenfile)
+        server = Server(discoverable, configfile, scenfile, workdir)
 
     # The remaining objects are only instantiated in the sim nodes
     if mode == 'sim':

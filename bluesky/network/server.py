@@ -31,9 +31,7 @@ def split_scenarios(scentime, scencmd):
 
 class Server(Thread):
     ''' Implementation of the BlueSky simulation server. '''
-    def __init__(
-        self, discovery, altconfig=None, startscn=None, spawn_default_node: bool = True
-    ):
+    def __init__(self, discovery, altconfig=None, startscn=None, workdir=None, spawn_default_node: bool = True):
         super().__init__()
         self.spawned_processes = dict()
         self.running = True
@@ -46,6 +44,7 @@ class Server(Thread):
         self.avail_nodes = set()
 
         # Information to pass on to spawned nodes
+        self.workdir = workdir
         self.altconfig = altconfig
         self.startscn = startscn
 
@@ -85,6 +84,8 @@ class Server(Thread):
             args = [sys.executable, '-m', 'bluesky', '--sim', '--groupid', bin2hex(newid)]
             if self.altconfig:
                 args.extend(['--configfile', self.altconfig])
+            if self.workdir:
+                args.extend(['--workdir', self.workdir])
             if startscn:
                 args.extend(['--scenfile', startscn])
             self.spawned_processes[newid] = Popen(args)
