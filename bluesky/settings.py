@@ -1,4 +1,5 @@
 '''BlueSky global configuration module'''
+import bluesky as bs
 import re
 import inspect
 from bluesky.pathfinder import resource
@@ -28,7 +29,7 @@ def init(cfgfile=''):
     globals()['_cfgfile'] = resource(cfgfile)
 
     # Read the configuration file
-    print(f'Reading config from {_cfgfile}')
+    bs.logger.info(f'Reading config from {_cfgfile}')
     with open(_cfgfile) as fin:
         config = fin.read()
     # BlueSky resources have been moved since v2022.9.19. Update config file if necessary

@@ -78,7 +78,7 @@ class ND(QGLWidget):
     def create_objects(self):
         if not (self.isValid() and self.shareWidget.initialized):
             self.invalid_count += 1
-            print('ND: Context not valid in create_objects, or shareWidget not yet initialized')
+            bs.logger.warning('ND: Context not valid in create_objects, or shareWidget not yet initialized')
             QTimer.singleShot(100, self.create_objects)
             return
 

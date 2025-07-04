@@ -32,19 +32,19 @@ class TcpSocket:
             self.sock.settimeout(10)    # 10 second timeout
             self.sock.connect((ip, port))       # connecting
             self.is_connected = True
-            print("Server connected. HOST: %s, PORT: %s" % (ip, port))
+            bs.logger.info(f"Server connected. HOST: {ip}, PORT: {port}")
         except Exception as err:
             self.is_connected = False
-            print("Connection Error: %s" % err)
+            bs.logger.error(f"Connection Error: {err}")
             pass
 
     def disconnectFromHost(self):
         try:
             self.sock.close()
             self.is_connected = False
-            print("Server disconnected.")
+            bs.logger.info("Server disconnected.")
         except Exception as err:
-            print("Disconnection Error: %s" % err)
+            bs.logger.error(f"Disconnection Error: {err}")
             pass
 
     def isConnected(self):
@@ -61,12 +61,12 @@ class TcpSocket:
                 self.processData(data)
                 time.sleep(0.1)
             except Exception as err:
-                print("Receiver Error: %s" % err)
+                bs.logger.error(f"Receiver Error: {err}")
                 time.sleep(1.0)
 
     def processData(self, data):
         # rewrite this function
-        print("parsing data...")
+        bs.logger.info("parsing data...")
 
     def numConnections(self):
         return None

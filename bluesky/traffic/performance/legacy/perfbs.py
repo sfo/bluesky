@@ -114,10 +114,10 @@ class Legacy(PerfBase):
                 coeffidx.append(0)
                 if not settings.verbose:
                     if not self.warned:
-                        print("Aircraft is using default B747-400 performance.")
+                        bs.logger.warning("Aircraft is using default B747-400 performance.")
                         self.warned = True
                 else:
-                    print("Flight " + bs.traf.id[-1] + " has an unknown aircraft type, " + actype + ", BlueSky then uses default B747-400 performance.")
+                    bs.logger.info(f"Flight {bs.traf.id[-1]} has an unknown aircraft type, {actype}, BlueSky then uses default B747-400 performance.")
         coeffidx = np.array(coeffidx)
 
         # note: coefficients are initialized in SI units
@@ -189,6 +189,9 @@ class Legacy(PerfBase):
         self.ffcr[-n:]      = np.where(turboprops, 1. , coeffBS.ffcr[jetidx]*coeffBS.n_eng[coeffidx]) / 60.0
         self.ffid[-n:]      = np.where(turboprops, 1. , coeffBS.ffid[jetidx]*coeffBS.n_eng[coeffidx]) / 60.0
         self.ffap[-n:]      = np.where(turboprops, 1. , coeffBS.ffap[jetidx]*coeffBS.n_eng[coeffidx]) / 60.0
+
+    def available_actypes(self, fixwing_only: bool = True) -> set[str]:
+        return set(coeffBS.atype)
 
     def update(self, dt):
         ''' Periodic update function for performance calculations. '''

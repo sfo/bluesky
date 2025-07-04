@@ -1,5 +1,6 @@
 """ Airspace metrics plugin. """
 import numpy as np
+import bluesky as bs
 from bluesky import stack, traf, sim  #, settings, navdb, traf, sim, scr, tools
 from bluesky.core import Entity, timed_function
 from bluesky.tools import areafilter, datalog, plotter, geo
@@ -97,7 +98,7 @@ class Metrics(Entity):
             tcpa = np.array(tcpa)[mask]
         else:
             ownidx = np.array([])
-    
+
         sendeff = False
         for idx, (sector, previnside) in enumerate(zip(self.sectors, self.acinside)):
             inside = areafilter.checkInside(sector, traf.lat, traf.lon, traf.alt)
@@ -182,7 +183,7 @@ class Metrics(Entity):
     @stack.command(name='METRICS')
     def stackio(self, cmd:'txt', name:'txt'=''):
         ''' Calculate a set of metrics within specified sectors. '''
-        print('BLAAA', cmd, name)
+        bs.logger.info(f'BLAAA {cmd} {name}')
         if cmd == 'LIST':
             if not self.sectors:
                 return True, 'No registered sectors available'

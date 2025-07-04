@@ -1,4 +1,5 @@
 ''' BlueSky functions for geographical calculations. '''
+import bluesky as bs
 from bluesky import settings
 from bluesky.tools.geo._geo import nm, magdec, initdecl_data, magdeccmd, kwikpos
 
@@ -21,16 +22,16 @@ if getattr(settings, 'prefer_compiled'):
             kwikqdrdist,
             kwikqdrdist_matrix
         )
-        print('Using compiled geo functions')
+        bs.logger.info('Using compiled geo functions')
     except ImportError:
-        from bluesky.tools.geo._geo import (rwgs84, rwgs84_matrix, qdrdist, 
+        from bluesky.tools.geo._geo import (rwgs84, rwgs84_matrix, qdrdist,
                                         qdrdist_matrix, latlondist, latlondist_matrix,
-                                        wgsg, qdrpos, kwikdist, kwikdist_matrix, 
+                                        wgsg, qdrpos, kwikdist, kwikdist_matrix,
                                         kwikqdrdist, kwikqdrdist_matrix)
-        print('Could not load compiled geo functions, Using Python-based geo functions instead')
+        bs.logger.info('Could not load compiled geo functions, Using Python-based geo functions instead')
 else:
-    from bluesky.tools.geo._geo import (rwgs84, rwgs84_matrix, qdrdist, 
+    from bluesky.tools.geo._geo import (rwgs84, rwgs84_matrix, qdrdist,
                                         qdrdist_matrix, latlondist, latlondist_matrix,
-                                        wgsg, qdrpos, kwikdist, kwikdist_matrix, 
+                                        wgsg, qdrpos, kwikdist, kwikdist_matrix,
                                         kwikqdrdist, kwikqdrdist_matrix)
-    print('Using Python-based geo functions')
+    bs.logger.info('Using Python-based geo functions')

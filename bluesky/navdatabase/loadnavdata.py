@@ -1,4 +1,5 @@
 ''' Loader functions for navigation data. '''
+import bluesky as bs
 import pickle
 
 from bluesky import settings
@@ -25,7 +26,7 @@ def load_navdata():
             codata        = cache.load()
             rwythresholds = cache.load()
         except (pickle.PickleError, cachefile.CacheError) as e:
-            print(e.args[0])
+            bs.logger.error(e.args[0])
 
             wptdata, aptdata, awydata, firdata, codata = loadnavdata_txt()
             rwythresholds = loadthresholds_txt()

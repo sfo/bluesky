@@ -24,7 +24,7 @@ def loadnavdata_txt():
 
 
     with open(bs.resource(settings.navdata_path) / 'nav.dat', 'rb') as f:
-        print("Reading nav.dat")
+        bs.logger.info("Reading nav.dat")
 
         for line in f:
             line = line.decode(encoding="ascii", errors="ignore").strip()
@@ -78,11 +78,11 @@ def loadnavdata_txt():
             else:
                 wptdata["wpfreq"].append(0.0)
 
-            if wptype in ["VOR","NDB"]:
+            if wptype == "VOR":
                 wptdata["wpvar"].append(float(fields[6])) # Magnetic variation in np.degrees
                 wptdata["wpid"].append(fields[7]) # Id
 
-            elif wptype in ["DME","TACAN"]:
+            elif wptype in ["NDB", "DME","TACAN"]:
                 wptdata["wpvar"].append(0.0) # Magnetic variation not given
                 wptdata["wpid"].append(fields[7]) # Id
 
@@ -102,7 +102,7 @@ def loadnavdata_txt():
 
     #----------  Read  fix.dat file ----------
     with open(bs.resource(settings.navdata_path) / 'fix.dat', 'rb') as f:
-        print("Reading fix.dat")
+        bs.logger.info("Reading fix.dat")
         for line in f:
             line = line.decode(encoding="ascii", errors="ignore").strip()
 
@@ -153,7 +153,7 @@ def loadnavdata_txt():
 
 
     with open(bs.resource(settings.navdata_path) / 'awy.dat', 'rb') as f:
-        print("Reading awy.dat")
+        bs.logger.info("Reading awy.dat")
 
         for line in f:
             line = line.decode(encoding="ascii", errors="ignore").strip()
@@ -357,7 +357,7 @@ def loadthresholds_txt():
     rwythresholds = dict()
     curthresholds = None
     zfile = ZipFile(bs.resource(settings.navdata_path) / 'apt.zip')
-    print("Reading apt.dat from apt.zip")
+    bs.logger.info("Reading apt.dat from apt.zip")
     with zfile.open('apt.dat', 'r') as f:
         for line in f:
             elems = line.decode(

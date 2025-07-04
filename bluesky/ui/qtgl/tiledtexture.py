@@ -69,7 +69,7 @@ class Tile:
                 try:
                     url_request = urlopen(url.format(
                         zoom=zoom, x=tilex, y=tiley))
-                    
+
                     if url_request.status == 204:
                         # if no content load a blank tile
                         self.image = QImage(256, 256, QImage.Format.Format_ARGB32)
@@ -81,7 +81,7 @@ class Tile:
                         if url_request.headers['Content-Encoding'] == 'gzip':
                             # There is a chance that data may come as a gzip so decompress
                             data = gzip.decompress(data)
-                                        
+
                         self.image = QImage.fromData(
                             data).convertToFormat(QImage.Format.Format_ARGB32)
 
@@ -89,8 +89,8 @@ class Tile:
                             fout.write(data)
                     break
                 except URLError as e:
-                    print(f'Error loading {url.format(zoom=zoom, x=tilex, y=tiley)}:')
-                    print(traceback.format_exc())
+                    bs.logger.error(f'Error loading {url.format(zoom=zoom, x=tilex, y=tiley)}:')
+                    bs.logger.error(traceback.format_exc())
 
 
 class TileLoader(QRunnable):
@@ -238,8 +238,8 @@ class TiledTexture(glh.Texture, metaclass=TiledTextureMeta):
         super().bind(4)
 
     def panzoom(self, pzdata=None, finished=True):
-        ''' Update textures whenever pan/zoom changes. 
-            
+        ''' Update textures whenever pan/zoom changes.
+
             Arguments:
             - finished: False when still in the process of panning/zooming.
         '''

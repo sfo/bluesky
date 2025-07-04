@@ -45,7 +45,7 @@ class Navdatabase:
         self.reset()
 
     def reset(self):
-        print("Loading global navigation database...")
+        bs.logger.info("Loading global navigation database...")
         wptdata, aptdata, awydata, firdata, codata, rwythresholds = load_navdata()
 
         # Get waypoint data

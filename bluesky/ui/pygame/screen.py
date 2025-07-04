@@ -87,8 +87,7 @@ class Screen(Entity):
 
     def init(self):
         # Read Screen configuration file:
-        print()
-        print("Setting up screen...")
+        bs.logger.info("Setting up screen...")
 
         lst = np.genfromtxt(bs.resource("graphics/scr_cfg.dat"), comments='#', dtype='i4')
 
@@ -222,7 +221,7 @@ class Screen(Entity):
         #-------------------------COASTLINE DATA--------------------------------------
         # Init geo (coastline)  data
         f = open(bs.resource("navdata/coastlines.dat"), 'r')
-        print("Reading coastlines.dat")
+        bs.logger.info("Reading coastlines.dat")
         lines = f.readlines()
         f.close()
         records = []
@@ -260,7 +259,7 @@ class Screen(Entity):
         self.geosel = ()  # Force reselect first time coastlines
         self.firsel = ()  # Force reselect first time FIR lines
 
-        print("    ", len(self.coastlat0), " coastlines added.")
+        bs.logger.info(f"\t{len(self.coastlat0)} coastlines added.")
 
         # Set default coastlines & FIRs on:
         self.swgeo = True
@@ -591,7 +590,7 @@ class Screen(Entity):
                 # Draw LINE or POLYGON with objdata = [lat0,lon,lat1,lon1,lat2,lon2,..]
                 if self.objtype[i]=='LINE' or self.objtype[i]=="POLY" or self.objtype[i]=="POLYLINE":
                     npoints = int(len(self.objdata[i])/2)
-                    print(npoints)
+                    bs.logger.info(npoints)
                     x0,y0 = self.ll2xy(self.objdata[i][0],self.objdata[i][1])
                     for j in range(1,npoints):
                         x1,y1 = self.ll2xy(self.objdata[i][j*2],self.objdata[i][j*2+1])

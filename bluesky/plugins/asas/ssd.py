@@ -1,4 +1,5 @@
 ''' Conflict resolution based on the SSD algorithm. '''
+import bluesky as bs
 from bluesky.traffic.asas import ConflictResolution
 from bluesky.tools import geo
 from bluesky.tools.aero import nm
@@ -7,7 +8,7 @@ import numpy as np
 try:
     import pyclipper
 except ImportError:
-    print("Could not import pyclipper, RESO SSD will not function")
+    bs.logger.error("Could not import pyclipper, RESO SSD will not function")
 
 
 # TODO: not completely migrated yet to class-based implementation

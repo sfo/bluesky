@@ -1,4 +1,5 @@
 ''' BlueSky resource access '''
+import bluesky as bs
 import shutil
 import itertools
 from pathlib import Path
@@ -78,7 +79,7 @@ class ResourcePath(MultiplexedPath):
         paths = []
         if not descendants:
             return self
-        
+
         for path in (p.joinpath(*descendants) for p in self._paths):
             if path.exists():
                 if path.is_dir():
@@ -91,13 +92,13 @@ class ResourcePath(MultiplexedPath):
         # if it does not exist, construct it with the first path
         return ResourcePath(*paths) if len(paths) > 1 else \
             paths[0] if len(paths) == 1 else self._paths[0].joinpath(*descendants)
-    
+
     __truediv__ = joinpath
 
 
 def resource(*descendants):
     ''' Get a path pointing to a BlueSky resource.
-    
+
         Arguments:
         - descendants: Zero or more path-like objects (Path or str)
 
@@ -130,22 +131,22 @@ def init(workdir=None):
             # Initialise this folder if it doesn't exist
             if not workdir.exists():
                 # Create directory and populate with basics
-                print(f'Creating BlueSky base directory "{workdir.absolute()}"')
+                bs.logger.info(f'Creating BlueSky base directory "{workdir.absolute()}"')
                 workdir.mkdir()
 
     elif not Path(workdir).exists():
-        print(f"Specified working directory {workdir} doesn't exist!")
+        bs.logger.warning(f"Specified working directory {workdir} doesn't exist!")
 
     # Ensure existence of scenario, plugins, output, and cache directories
     for subdir in map(workdir.joinpath, ('scenario', 'plugins', 'output', 'cache')):
         if not subdir.exists():
-            print(f'Creating directory "{subdir}"')
+            bs.logger.info(f'Creating directory "{subdir}"')
             subdir.mkdir()
 
     # Ensure existence of config file
     cfgfile = workdir.joinpath("settings.cfg")
     if not cfgfile.exists():
-        print(f'Copying default configfile to {cfgfile}')
+        bs.logger.info(f'Copying default configfile to {cfgfile}')
         shutil.copy(resource('default.cfg'), cfgfile)
 
     # Set correct search paths for plugins
