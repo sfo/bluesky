@@ -134,7 +134,7 @@ def init(workdir=None):
                 bs.logger.info(f'Creating BlueSky base directory "{workdir.absolute()}"')
                 workdir.mkdir()
 
-    elif not Path(workdir).exists():
+    elif not (workdir := Path(workdir)).exists():
         bs.logger.warning(f"Specified working directory {workdir} doesn't exist!")
 
     # Ensure existence of scenario, plugins, output, and cache directories
